@@ -1,5 +1,6 @@
 # Prerequisites
 *.d
+*.SFO
 
 # Object files
 *.o
@@ -10,7 +11,6 @@
 # Linker output
 *.ilk
 *.map
-*.exp
 
 # Precompiled Headers
 *.gch
@@ -27,6 +27,7 @@
 *.so
 *.so.*
 *.dylib
+*.prx
 
 # Executables
 *.exe
@@ -35,6 +36,7 @@
 *.i*86
 *.x86_64
 *.hex
+*.PBP
 
 # Debug files
 *.dSYM/
