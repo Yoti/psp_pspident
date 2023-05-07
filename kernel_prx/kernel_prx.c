@@ -12,7 +12,7 @@ int module_start(SceSize args, void *argp) {
 
 u32 prxKernelGetModel(void) {
 	int k1 = pspSdkSetK1(0);
-	int g = sceKernelGetModel();
+	u32 g = sceKernelGetModel();
 	pspSdkSetK1(k1);
 	return g;
 }
@@ -20,7 +20,7 @@ u32 prxKernelGetModel(void) {
 u32 sceSyscon_driver_7EC5A957(u32*baryon);
 u32 prxSysconGetBaryonVersion(u32*baryon) {
 	int k1 = pspSdkSetK1(0);
-	int bv = sceSyscon_driver_7EC5A957(baryon);
+	u32 bv = sceSyscon_driver_7EC5A957(baryon);
 	pspSdkSetK1(k1);
 	return bv;
 }
@@ -28,7 +28,7 @@ u32 prxSysconGetBaryonVersion(u32*baryon) {
 u32 sceSyscon_driver_E7E87741(u32*pommel);
 u32 prxSysconGetPommelVersion(u32*pommel) {
 	int k1 = pspSdkSetK1(0);
-	int pv = sceSyscon_driver_E7E87741(pommel);
+	u32 pv = sceSyscon_driver_E7E87741(pommel);
 	pspSdkSetK1(k1);
 	return pv;
 }
@@ -36,7 +36,7 @@ u32 prxSysconGetPommelVersion(u32*pommel) {
 u32 sceSysreg_driver_8F4F4E96(void);
 u32 prxSysregGetFuseConfig(void) {
 	int k1 = pspSdkSetK1(0);
-	int fc = sceSysreg_driver_8F4F4E96();
+	u32 fc = sceSysreg_driver_8F4F4E96();
 	pspSdkSetK1(k1);
 	return fc;
 }
@@ -54,7 +54,7 @@ u32 prxSysregGetKirkVersion(void) {
 	int k1 = pspSdkSetK1(0);
 	sceSysregKirkBusClockEnable();
 	sceKernelDelayThread(1000);
-	int kv = *(u32*)0xBDE00004;
+	u32 kv = *(u32*)0xBDE00004;
 	pspSdkSetK1(k1);
 	return kv;
 }
@@ -64,7 +64,7 @@ u32 prxSysregGetSpockVersion(void) {
 	int k1 = pspSdkSetK1(0);
 	sceSysregAtaBusClockEnable();
 	sceKernelDelayThread(1000);
-	int sv = *(u32*)0xBDF00004;
+	u32 sv = *(u32*)0xBDF00004;
 	pspSdkSetK1(k1);
 	return sv;
 }
@@ -72,7 +72,7 @@ u32 prxSysregGetSpockVersion(void) {
 u32 sceSysreg_driver_E2A5D1EE(void);
 u32 prxSysregGetTachyonVersion(void) {
 	int k1 = pspSdkSetK1(0);
-	int tv = sceSysreg_driver_E2A5D1EE();
+	u32 tv = sceSysreg_driver_E2A5D1EE();
 	pspSdkSetK1(k1);
 	return tv;
 }
