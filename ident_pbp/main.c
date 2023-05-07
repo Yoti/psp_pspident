@@ -119,12 +119,12 @@ int main(int argc, char*argv[]) {
 		case 0x00810000: {
 			switch(baryon) {
 				case 0x002C4000: {
-					sprintf(model, "PSP-3000 TA-093v%s", pommel == 0x00000141 ? "1" : baryon == 0x00000143 ? "2" : "?");
+					sprintf(model, "PSP-3000 TA-093v%s", pommel == 0x00000141 ? "1" : pommel == 0x00000143 ? "2" : "?");
 					sprintf(tlotr, "Samwise VA2");
 					break;
 				}
 				case 0x002E4000: {
-					sprintf(model, "PSP-3000 TA-095v1");
+					sprintf(model, "PSP-3000 TA-095v1"); // (tachyon >> 16) & 0xF == 1
 					sprintf(tlotr, "Samwise VA2");
 					break;
 				}
@@ -132,7 +132,7 @@ int main(int argc, char*argv[]) {
 			break;
 		}
 		case 0x00820000: {
-			sprintf(model, "PSP-3000 TA-095v2");
+			sprintf(model, "PSP-3000 TA-095v2"); // (tachyon >> 16) & 0xF == 2
 			sprintf(tlotr, "Samwise VA2");
 			break;
 		}
@@ -156,7 +156,7 @@ int main(int argc, char*argv[]) {
 		}
 	}
 
-	if ((generation == 4) && (tachyon >> 20 == 8)) {
+	if ((generation == 4) && (baryon == 0x002E4000)) {
 		sprintf(model, "%s (fake 04g/real 09g)", model);
 	} else {
 		sprintf(model, "%s (%02ig)", model, generation);
