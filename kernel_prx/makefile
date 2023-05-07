@@ -1,7 +1,7 @@
 TARGET = kernel
 OBJS = kernel_prx.o
 
-INCDIR = inc_lib
+INCDIR = 
 CFLAGS = -O2 -G0 -Wall -fno-pic
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
@@ -13,9 +13,9 @@ PRX_EXPORTS = kernel_exp.exp
 USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1
 
-LIBDIR = inc_lib
-LDFLAGS = -mno-crt0 -nostartfiles
+LIBDIR = 
 LIBS = 
+LDFLAGS = -mno-crt0 -nostartfiles
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak

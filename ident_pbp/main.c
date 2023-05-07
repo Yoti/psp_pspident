@@ -34,7 +34,8 @@ int main(int argc, char*argv[]) {
 	unsigned int baryon; prxSysconGetBaryonVersion(&baryon);
 	unsigned int pommel; prxSysconGetPommelVersion(&pommel);
 	unsigned int generation = prxKernelGetModel() + 1; // char
-
+	char kirk[4]; *(u32*)kirk = prxSysregGetKirkVersion();
+	char spock[4]; *(u32*)spock = prxSysregGetSpockVersion();
 	char model[32]; memset(model, 0, sizeof(model));
 	char tlotr[16]; memset(tlotr, 0, sizeof(tlotr));
 
@@ -165,6 +166,8 @@ int main(int argc, char*argv[]) {
 	printf(" * %-10s 0x%08x\n", "Tachyon", tachyon);
 	printf(" * %-10s 0x%08x\n", "Baryon", baryon);
 	printf(" * %-10s 0x%08x\n", "Pommel", pommel);
+	printf(" * %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
+	printf(" * %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
 	printf(" * %-10s %02ig\n\n", "Generation", generation);
 
 	printf(" * %s\n", model);
