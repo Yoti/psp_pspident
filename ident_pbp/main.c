@@ -43,27 +43,32 @@ int main(int argc, char*argv[]) {
 	char model[64]; memset(model, 0, sizeof(model));
 	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
 	char cxdgg[64]; memset(cxdgg, 0, sizeof(cxdgg));
+	char bromv[64]; memset(bromv, 0, sizeof(bromv)); // TODO: proper detection
 
 	switch(tachyon) {
 		case 0x00140000: {
+			sprintf(bromv, "2004-04-20");
 			sprintf(cxdgg, "CXD2962GG");
 			sprintf(model, "PSP-1000 TA-079v%x", baryon >> 16); // v1/2/3
 			sprintf(tlotr, "First");
 			break;
 		}
 		case 0x00200000: {
+			sprintf(bromv, "2004-04-20");
 			sprintf(cxdgg, "CXD2962GG");
 			sprintf(model, "PSP-1000 TA-079v%x", (baryon >> 16) + 1); // v4/5
 			sprintf(tlotr, "First");
 			break;
 		}
 		case 0x00300000: {
+			sprintf(bromv, "2004-04-20");
 			sprintf(cxdgg, "CXD2962BGG");
 			sprintf(model, "PSP-1000 TA-081v%x", (pommel & 0xF) - 2); // v1/2
 			sprintf(tlotr, "First");
 			break;
 		}
 		case 0x00400000: {
+			sprintf(bromv, "2005-01-04");
 			sprintf(cxdgg, "CXD2967GG");
 			sprintf(model, "PSP-1000 TA-08%s", baryon == 0x00114000 ? "2" : baryon == 0x00121000 ? "6" : "?");
 			sprintf(tlotr, "Legolas%s", baryon == 0x00114000 ? "1" : baryon == 0x00121000 ? "2" : "?");
@@ -71,6 +76,7 @@ int main(int argc, char*argv[]) {
 		}
 
 		case 0x00500000: {
+			sprintf(bromv, "2005-01-04");
 			switch(baryon) {
 				case 0x0022B200: {
 					sprintf(cxdgg, "CXD2975[B|C]GG");
@@ -105,6 +111,7 @@ int main(int argc, char*argv[]) {
 		}
 
 		case 0x00600000: {
+			sprintf(bromv, "2005-01-04");
 			sprintf(cxdgg, "CXD2988GG");
 			switch(baryon) {
 				case 0x00243000: {
@@ -126,6 +133,7 @@ int main(int argc, char*argv[]) {
 			break;
 		}
 		case 0x00810000: {
+			sprintf(bromv, "2007-09-10");
 			sprintf(cxdgg, "CXD2993GG");
 			switch(baryon) {
 				case 0x002C4000: {
@@ -142,6 +150,7 @@ int main(int argc, char*argv[]) {
 			break;
 		}
 		case 0x00820000: {
+			sprintf(bromv, "2007-09-10");
 			sprintf(cxdgg, "CXD2993GG");
 			sprintf(model, "PSP-3000 TA-095v2"); // (tachyon >> 16) & 0xF == 2
 			sprintf(tlotr, "Samwise VA2");
@@ -149,6 +158,7 @@ int main(int argc, char*argv[]) {
 		}
 
 		case 0x00720000: {
+			sprintf(bromv, "2007-09-10");
 			sprintf(cxdgg, "CXD29??GG");
 			sprintf(model, "PSP-N1000 TA-091");
 			sprintf(tlotr, "Strider");
@@ -156,6 +166,7 @@ int main(int argc, char*argv[]) {
 		}
 
 		case 0x00900000: {
+			sprintf(bromv, "2007-09-10");
 			sprintf(cxdgg, "CXD2998GG");
 			sprintf(model, "PSP-E1000 TA-096/TA-097");
 			sprintf(tlotr, "Bilbo");
@@ -163,6 +174,7 @@ int main(int argc, char*argv[]) {
 		}
 
 		default: {
+			sprintf(bromv, "200?-??-??");
 			sprintf(cxdgg, "CXD29??GG");
 			sprintf(model, "PSP-???? TA-0??");
 			sprintf(tlotr, "???");
@@ -176,10 +188,10 @@ int main(int argc, char*argv[]) {
 		sprintf(model, "%s (%02ig)", model, generation);
 	}
 
-	printf(" * %-10s 0x%08x (", "Firmware", firmware);
-	printf("%x.%x%x)\n", firmware >> 24, (firmware >> 16) & 0xff, (firmware >> 8) & 0xff);
-	printf(" * %-10s 0x%08x\n", "Tachyon", tachyon);
-	printf(" * %-10s 0x%08x\n", "Baryon", baryon);
+	printf(" * %-10s v%x.%x%x (", "Firmware", firmware >> 24, (firmware >> 16) & 0xff, (firmware >> 8) & 0xff);
+	printf("0x%08x)\n", firmware);
+	printf(" * %-10s 0x%08x [%s]\n", "Tachyon", tachyon, bromv);
+	printf(" * %-10s 0x%08x [%s]\n", "Baryon", baryon, "times");
 	printf(" * %-10s 0x%08x\n", "Pommel", pommel);
 	printf(" * %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
 	printf(" * %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
@@ -190,13 +202,14 @@ int main(int argc, char*argv[]) {
 	printf(" * %s\n", model);
 	printf(" * Call me [%s], Gandalf!\n", tlotr);
 
+	sceKernelDelayThread(1*1000*1000);
 	/*
 	sceIoMkdir("ms0:/PICTURE", 0777);
 	sceIoMkdir("ms0:/PICTURE/pspIdent", 0777);
 	printf("Screenshot was saved to ...");
 	*/
 
-	sceKernelDelayThread(10*1000*1000);
+	sceKernelDelayThread(9*1000*1000);
 	sceKernelExitGame();
 
 	return 0;
