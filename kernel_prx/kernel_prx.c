@@ -1,6 +1,5 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
-#include <pspidstorage.h>
 #include <pspsysmem_kernel.h>
 
 PSP_MODULE_INFO("kernel_prx", 0x1006, 1, 0);

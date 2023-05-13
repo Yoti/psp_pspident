@@ -40,26 +40,31 @@ int main(int argc, char*argv[]) {
 	char spock[4]; *(u32*)spock = prxSysregGetSpockVersion();
 	u32 tachyon = prxSysregGetTachyonVersion();
 
-	char model[32]; memset(model, 0, sizeof(model));
-	char tlotr[16]; memset(tlotr, 0, sizeof(tlotr));
+	char model[64]; memset(model, 0, sizeof(model));
+	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
+	char cxdgg[64]; memset(cxdgg, 0, sizeof(cxdgg));
 
 	switch(tachyon) {
 		case 0x00140000: {
-			sprintf(model, "PSP-1000 TA-079v%x", baryon >> 16);
+			sprintf(cxdgg, "CXD2962GG");
+			sprintf(model, "PSP-1000 TA-079v%x", baryon >> 16); // v1/2/3
 			sprintf(tlotr, "First");
 			break;
 		}
 		case 0x00200000: {
-			sprintf(model, "PSP-1000 TA-079v%x", (baryon >> 16) + 1);
+			sprintf(cxdgg, "CXD2962GG");
+			sprintf(model, "PSP-1000 TA-079v%x", (baryon >> 16) + 1); // v4/5
 			sprintf(tlotr, "First");
 			break;
 		}
 		case 0x00300000: {
-			sprintf(model, "PSP-1000 TA-081v%x", (pommel & 0xF) - 2);
+			sprintf(cxdgg, "CXD2962BGG");
+			sprintf(model, "PSP-1000 TA-081v%x", (pommel & 0xF) - 2); // v1/2
 			sprintf(tlotr, "First");
 			break;
 		}
 		case 0x00400000: {
+			sprintf(cxdgg, "CXD2967GG");
 			sprintf(model, "PSP-1000 TA-08%s", baryon == 0x00114000 ? "2" : baryon == 0x00121000 ? "6" : "?");
 			sprintf(tlotr, "Legolas%s", baryon == 0x00114000 ? "1" : baryon == 0x00121000 ? "2" : "?");
 			break;
@@ -68,19 +73,22 @@ int main(int argc, char*argv[]) {
 		case 0x00500000: {
 			switch(baryon) {
 				case 0x0022B200: {
+					sprintf(cxdgg, "CXD2975[B|C]GG");
 					sprintf(model, "PSP-2000 TA-085v1");
 					sprintf(tlotr, "Frodo");
 					break;
 				}
 				case 0x00234000: {
+					sprintf(cxdgg, "CXD2975[B|C]GG");
 					sprintf(model, "PSP-2000 TA-085v2");
 					sprintf(tlotr, "Frodo");
 					break;
 				}
 				case 0x00243000: {
+					sprintf(cxdgg, "CXD2975C1GG");
 					switch(pommel) {
 						case 0x00000123: {
-							sprintf(model, "PSP-2000 TA-088v1/v2");
+							sprintf(model, "PSP-2000 TA-088v1/v2"); // TODO: proper detection
 							sprintf(tlotr, "Frodo");
 							break;
 						}
@@ -97,6 +105,7 @@ int main(int argc, char*argv[]) {
 		}
 
 		case 0x00600000: {
+			sprintf(cxdgg, "CXD2988GG");
 			switch(baryon) {
 				case 0x00243000: {
 					sprintf(model, "PSP-2000 TA-088v3");
@@ -104,7 +113,7 @@ int main(int argc, char*argv[]) {
 					break;
 				}
 				case 0x00263100: {
-					sprintf(model, "PSP-3000 TA-090v%x", pommel & 0xF);
+					sprintf(model, "PSP-3000 TA-090v%x", pommel & 0xF); // v2/3
 					sprintf(tlotr, "Samwise");
 					break;
 				}
@@ -117,6 +126,7 @@ int main(int argc, char*argv[]) {
 			break;
 		}
 		case 0x00810000: {
+			sprintf(cxdgg, "CXD2993GG");
 			switch(baryon) {
 				case 0x002C4000: {
 					sprintf(model, "PSP-3000 TA-093v%s", pommel == 0x00000141 ? "1" : pommel == 0x00000143 ? "2" : "?");
@@ -132,25 +142,29 @@ int main(int argc, char*argv[]) {
 			break;
 		}
 		case 0x00820000: {
+			sprintf(cxdgg, "CXD2993GG");
 			sprintf(model, "PSP-3000 TA-095v2"); // (tachyon >> 16) & 0xF == 2
 			sprintf(tlotr, "Samwise VA2");
 			break;
 		}
 
 		case 0x00720000: {
+			sprintf(cxdgg, "CXD29??GG");
 			sprintf(model, "PSP-N1000 TA-091");
 			sprintf(tlotr, "Strider");
 			break;
 		}
 
 		case 0x00900000: {
+			sprintf(cxdgg, "CXD2998GG");
 			sprintf(model, "PSP-E1000 TA-096/TA-097");
 			sprintf(tlotr, "Bilbo");
 			break;
 		}
 
 		default: {
-			sprintf(model, "PSP-???? TA-???");
+			sprintf(cxdgg, "CXD29??GG");
+			sprintf(model, "PSP-???? TA-0??");
 			sprintf(tlotr, "???");
 			break;
 		}
@@ -176,7 +190,13 @@ int main(int argc, char*argv[]) {
 	printf(" * %s\n", model);
 	printf(" * Call me [%s], Gandalf!\n", tlotr);
 
-	sceKernelDelayThread(5*1000*1000);
+	/*
+	sceIoMkdir("ms0:/PICTURE", 0777);
+	sceIoMkdir("ms0:/PICTURE/pspIdent", 0777);
+	printf("Screenshot was saved to ...");
+	*/
+
+	sceKernelDelayThread(10*1000*1000);
 	sceKernelExitGame();
 
 	return 0;
