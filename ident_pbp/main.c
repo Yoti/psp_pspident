@@ -1,8 +1,8 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
-#include <pspctrl.h> // sceCtrl*()
-#include <stdio.h> // sprintf()
-#include <string.h> // mem*()
+#include <pspctrl.h>
+#include <stdio.h>
+#include <string.h>
 
 #define VER_MAJOR 1
 #define VER_MINOR 0
@@ -14,8 +14,6 @@ PSP_HEAP_SIZE_KB(1024);
 
 #include "../kernel_prx/kernel_prx.h"
 #define printf pspDebugScreenPrintf
-
-//SceCtrlData pad;
 
 int main(int argc, char*argv[]) {
 	pspDebugScreenInit();
@@ -44,7 +42,153 @@ int main(int argc, char*argv[]) {
 	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
 	char cxdgg[64]; memset(cxdgg, 0, sizeof(cxdgg));
 	char bromv[64]; memset(bromv, 0, sizeof(bromv)); // TODO: proper detection
+	char times[64]; memset(times, 0, sizeof(times)); // TODO: proper detection
+/*
+	switch(tachyon) {
+		case 0x00140000:
+			sprintf(tlotr, "First");
+			sprintf(bromv, "v1 (2004-04-20)");
+			sprintf(model, "%s", "PSP-1000 TA-079");
 
+			switch(baryon) {
+				case: 0x00010600:
+					sprintf(model, "%s%s", model, "v1");
+					sprintf(times, "200409230625");
+				break;
+				case: 0x00020600:
+					sprintf(model, "%s%s", model, "v2");
+					sprintf(times, "200410071128");
+				break;
+				case: 0x00030600:
+					sprintf(model, "%s%s", model, "v3");
+					sprintf(times, "200411290757");
+				break;
+				default:
+					sprintf(model, "%s%s", model, "v?");
+					sprintf(times, "YYYYMMDDHHMM");
+				break;
+			}
+
+		break;
+		case 0x00200000:
+			sprintf(tlotr, "First");
+			sprintf(bromv, "v1 (2004-04-20)");
+			sprintf(model, "%s", "PSP-1000 TA-079");
+
+			switch(baryon) {
+				case: 0x00030600:
+					sprintf(model, "%s%s", model, "v4");
+					sprintf(times, "200411290757");
+				break;
+				case: 0x00040600:
+					sprintf(model, "%s%s", model, "v5");
+					sprintf(times, "200504040852");
+				break;
+				default:
+					sprintf(model, "%s%s", model, "v?");
+					sprintf(times, "YYYYMMDDHHMM");
+				break;
+			}
+
+		break;
+		case 0x00300000:
+			sprintf(tlotr, "First");
+			sprintf(bromv, "v1 (2004-04-20)");
+			sprintf(model, "%s", "PSP-1000 TA-081");
+			sprintf(times, "200504040852");
+
+			switch(pommel) {
+				case: 0x00000103:
+					sprintf(model, "%s%s", model, "v1");
+				break;
+				case: 0x00000104:
+					sprintf(model, "%s%s", model, "v2");
+				break;
+				case: 0x00000103:
+					sprintf(model, "%s%s", model, "v?");
+				break;
+			}
+
+		break;
+		case 0x00400000:
+			sprintf(tlotr, "Legolas");
+			sprintf(bromv, "v2 (2005-01-04)");
+			sprintf(model, "%s", "PSP-1000 TA-08");
+
+			switch(baryon) {
+				case: 0x00114000:
+					sprintf(tlotr, "%s%s", tlotr, "1"); // Legolas1
+					sprintf(model, "%s%s", model, "2"); // TA-082
+					sprintf(times, "200509260441");
+				break;
+				case: 0x00121000:
+					sprintf(tlotr, "%s%s", tlotr, "2"); // Legolas2
+					sprintf(model, "%s%s", model, "6"); // TA-086
+					sprintf(times, "200512200558");
+				break;
+				default:
+					sprintf(tlotr, "%s%s", tlotr, "?"); // Legolas?
+					sprintf(model, "%s%s", model, "?"); // TA-08?
+					sprintf(times, "YYYYMMDDHHMM");
+				break;
+			}
+
+		break;
+		case 0x00500000:
+			sprintf(tlotr, "Frodo");
+			sprintf(bromv, "v2 (2005-01-04)");
+			sprintf(model, "%s", "PSP-2000 TA-0");
+
+			switch(baryon) {
+				case: 0x0022B200:
+					sprintf(model, "%s%s", model, "85v1"); // TA-085v1
+					sprintf(times, "200704161420");
+				break;
+				case: 0x00234000:
+					sprintf(model, "%s%s", model, "85v2"); // TA-085v2
+					sprintf(times, "200710022249");
+				break;
+				case: 0x00243000:
+					sprintf(times, "200711022212");
+					switch(pommel) {
+						case 0x00000123:
+							sprintf(model, "%s%s", model, "88v1/v2"); // TA-088v1/v2
+						break;
+						case 0x00000132:
+							sprintf(model, "%s%s", model, "90v1"); // TA-090v1
+						break;
+						default:
+							sprintf(model, "%s%s", model, "??"); // TA-0??
+						break;
+					}
+				break;
+				default:
+					sprintf(model, "%s%s", model, "??"); // TA-0??
+					sprintf(times, "YYYYMMDDHHMM");
+				break;
+			}
+
+		break;
+		case 0x00600000:
+			sprintf(model, "%s", "PSP-");
+		break;
+		case 0x00720000:
+			sprintf(model, "%s", "PSP-N1000");
+		break;
+		case 0x00810000:
+			sprintf(model, "%s", "PSP-3000");
+		break;
+		case 0x00820000:
+			sprintf(model, "%s", "PSP-3000");
+		break;
+		case 0x00900000:
+			sprintf(model, "%s", "PSP-E1000");
+		break;
+		default:
+			sprintf(model, "%s", "PSP-?000");
+		break;
+	}
+*/
 	switch(tachyon) {
 		case 0x00140000: {
 			sprintf(bromv, "2004-04-20");
