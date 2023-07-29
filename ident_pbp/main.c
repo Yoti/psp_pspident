@@ -338,7 +338,9 @@ int main(int argc, char*argv[]) {
 	printf(" * %-10s 0x%08x [%s]\n", "Baryon", baryon, "times");
 	printf(" * %-10s 0x%08x\n", "Pommel", pommel);
 	printf(" * %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
-	printf(" * %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
+	if (generation != 5) {
+		printf(" * %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
+	}
 	printf(" * %-10s 0x%llx\n", "FuseId", fuseid);
 	printf(" * %-10s 0x%04x\n", "FuseCfg", fusecfg);
 	printf(" * %-10s %02ig\n\n", "Generation", generation);
