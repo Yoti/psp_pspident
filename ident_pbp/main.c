@@ -108,10 +108,9 @@ int main(int argc, char*argv[]) {
 
 	char model[64]; memset(model, 0, sizeof(model));
 	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
-	char cxdgg[64]; memset(cxdgg, 0, sizeof(cxdgg));
 	char bromv[64]; memset(bromv, 0, sizeof(bromv)); // TODO: proper detection
 	char times[64]; memset(times, 0, sizeof(times)); sceSysconGetTimeStamp(times);
-/*
+
 	switch(tachyon) {
 		case 0x00140000:
 			sprintf(tlotr, "First");
@@ -119,13 +118,13 @@ int main(int argc, char*argv[]) {
 			sprintf(model, "%s", "PSP-1000 TA-079");
 
 			switch(baryon) {
-				case: 0x00010600:
+				case 0x00010600:
 					sprintf(model, "%s%s", model, "v1");
 				break;
-				case: 0x00020600:
+				case 0x00020600:
 					sprintf(model, "%s%s", model, "v2");
 				break;
-				case: 0x00030600:
+				case 0x00030600:
 					sprintf(model, "%s%s", model, "v3");
 				break;
 				default:
@@ -141,10 +140,10 @@ int main(int argc, char*argv[]) {
 			sprintf(model, "%s", "PSP-1000 TA-079");
 
 			switch(baryon) {
-				case: 0x00030600:
+				case 0x00030600:
 					sprintf(model, "%s%s", model, "v4");
 				break;
-				case: 0x00040600:
+				case 0x00040600:
 					sprintf(model, "%s%s", model, "v5");
 				break;
 				default:
@@ -160,10 +159,10 @@ int main(int argc, char*argv[]) {
 			sprintf(model, "%s", "PSP-1000 TA-081");
 
 			switch(pommel) {
-				case: 0x00000103:
+				case 0x00000103:
 					sprintf(model, "%s%s", model, "v1");
 				break;
-				case: 0x00000104:
+				case 0x00000104:
 					sprintf(model, "%s%s", model, "v2");
 				break;
 				default:
@@ -179,11 +178,11 @@ int main(int argc, char*argv[]) {
 			sprintf(model, "%s", "PSP-1000 TA-08");
 
 			switch(baryon) {
-				case: 0x00114000:
+				case 0x00114000:
 					sprintf(tlotr, "%s%s", tlotr, "1"); // Legolas1
 					sprintf(model, "%s%s", model, "2"); // TA-082
 				break;
-				case: 0x00121000:
+				case 0x00121000:
 					sprintf(tlotr, "%s%s", tlotr, "2"); // Legolas2
 					sprintf(model, "%s%s", model, "6"); // TA-086
 				break;
@@ -201,19 +200,20 @@ int main(int argc, char*argv[]) {
 			sprintf(model, "%s", "PSP-2000 TA-0");
 
 			switch(baryon) {
-				case: 0x0022B200:
-					sprintf(model, "%s%s", model, "85v1"); // TA-085v1
+				case 0x0022B200:
+					sprintf(model, "%s%s", model, "85v1");
 				break;
-				case: 0x00234000:
-					sprintf(model, "%s%s", model, "85v2"); // TA-085v2
+				case 0x00234000:
+					sprintf(model, "%s%s", model, "85v2");
 				break;
-				case: 0x00243000:
+				case 0x00243000:
 					switch(pommel) {
 						case 0x00000123:
-							sprintf(model, "%s%s", model, "88v1/v2"); // TA-088v1/v2
+							sprintf(model, "%s%s", model, "88v1/v2"); // TODO: proper detection
 						break;
 						case 0x00000132:
-							sprintf(model, "%s%s", model, "90v1"); // TA-090v1
+							flag = 1; // TODO: remove after proof
+							sprintf(model, "%s%s", model, "90v1");
 						break;
 						default:
 							flag = 1;
@@ -226,175 +226,114 @@ int main(int argc, char*argv[]) {
 					sprintf(model, "%s%s", model, "??"); // TA-0??
 				break;
 			}
-
 		break;
+
 		case 0x00600000:
+			sprintf(bromv, "v3 (2007-09-10)");
 			sprintf(model, "%s", "PSP-");
-		break;
-		case 0x00720000:
-			sprintf(model, "%s", "PSP-N1000");
-		break;
-		case 0x00810000:
-			sprintf(model, "%s", "PSP-3000");
-		break;
-		case 0x00820000:
-			sprintf(model, "%s", "PSP-3000");
-		break;
-		case 0x00900000:
-			sprintf(model, "%s", "PSP-E1000");
-		break;
-		default:
-			sprintf(model, "%s", "PSP-?000");
-		break;
-	}
-*/
-	switch(tachyon) {
-		case 0x00140000: {
-			sprintf(bromv, "2004-04-20");
-			sprintf(cxdgg, "CXD2962GG");
-			sprintf(model, "PSP-1000 TA-079v%x", baryon >> 16); // v1/2/3
-			sprintf(tlotr, "First");
-			break;
-		}
-		case 0x00200000: {
-			sprintf(bromv, "2004-04-20");
-			sprintf(cxdgg, "CXD2962GG");
-			sprintf(model, "PSP-1000 TA-079v%x", (baryon >> 16) + 1); // v4/5
-			sprintf(tlotr, "First");
-			break;
-		}
-		case 0x00300000: {
-			sprintf(bromv, "2004-04-20");
-			sprintf(cxdgg, "CXD2962BGG");
-			sprintf(model, "PSP-1000 TA-081v%x", (pommel & 0xF) - 2); // v1/2
-			sprintf(tlotr, "First");
-			break;
-		}
-		case 0x00400000: {
-			sprintf(bromv, "2005-01-04");
-			sprintf(cxdgg, "CXD2967GG");
-			sprintf(model, "PSP-1000 TA-08%s", baryon == 0x00114000 ? "2" : baryon == 0x00121000 ? "6" : "?");
-			sprintf(tlotr, "Legolas%s", baryon == 0x00114000 ? "1" : baryon == 0x00121000 ? "2" : "?");
-			break;
-		}
 
-		case 0x00500000: {
-			sprintf(bromv, "2005-01-04");
 			switch(baryon) {
-				case 0x0022B200: {
-					sprintf(cxdgg, "CXD2975[B|C]GG");
-					sprintf(model, "PSP-2000 TA-085v1");
+				case 0x00243000:
 					sprintf(tlotr, "Frodo");
-					break;
-				}
-				case 0x00234000: {
-					sprintf(cxdgg, "CXD2975[B|C]GG");
-					sprintf(model, "PSP-2000 TA-085v2");
-					sprintf(tlotr, "Frodo");
-					break;
-				}
-				case 0x00243000: {
-					sprintf(cxdgg, "CXD2975C1GG");
+					sprintf(model, "%s%s", model, "2000 TA-088v3");
+				break;
+				case 0x00263100:
+					sprintf(tlotr, "Samwise");
+					sprintf(model, "%s%s", model, "3000 TA-090v");
 					switch(pommel) {
-						case 0x00000123: {
-							sprintf(model, "PSP-2000 TA-088v1/v2"); // TODO: proper detection
-							sprintf(tlotr, "Frodo");
-							break;
-						}
-						case 0x00000132: {
-							sprintf(model, "PSP-2000 TA-090v1");
-							sprintf(tlotr, "Frodo");
-							break;
-						}
+						case 0x00000132:
+							sprintf(model, "%s%s", model, "2");
+						break;
+						case 0x00000133:
+							sprintf(model, "%s%s", model, "3");
+						break;
+						default:
+							flag = 1;
+							sprintf(model, "%s%s", model, "?"); // TA-090v?
+						break;
 					}
-					break;
-				}
-			}
-			break;
-		}
-
-		case 0x00600000: {
-			sprintf(bromv, "2005-01-04");
-			sprintf(cxdgg, "CXD2988GG");
-			switch(baryon) {
-				case 0x00243000: {
-					sprintf(model, "PSP-2000 TA-088v3");
-					sprintf(tlotr, "Frodo");
-					break;
-				}
-				case 0x00263100: {
-					sprintf(model, "PSP-3000 TA-090v%x", pommel & 0xF); // v2/3
+				break;
+				case 0x00285000:
 					sprintf(tlotr, "Samwise");
-					break;
-				}
-				case 0x00285000: {
-					sprintf(model, "PSP-3000 TA-092");
-					sprintf(tlotr, "Samwise");
-					break;
-				}
+					sprintf(model, "%s%s", model, "3000 TA-092");
+				break;
+				default:
+					flag = 1;
+					sprintf(tlotr, "???");
+					sprintf(model, "%s%s", model, "?000 TA-0??");
+				break;
 			}
-			break;
-		}
-		case 0x00810000: {
-			sprintf(bromv, "2007-09-10");
-			sprintf(cxdgg, "CXD2993GG");
-			sprintf(tlotr, "Samwise VA2");
-			switch(baryon) {
-				case 0x002C4000: {
-					sprintf(model, "PSP-3000 TA-093v%s", pommel == 0x00000141 ? "1" : pommel == 0x00000143 ? "2" : "?");
-					break;
-				}
-				case 0x002E4000: {
-					sprintf(model, "PSP-3000 TA-095v1"); // (tachyon >> 16) & 0xF == 1
-					break;
-				}
-				case 0x012E4000: {
-					sprintf(model, "PSP-3000 TA-095v3"); // 07g
-					break;
-				}
-			}
-			break;
-		}
-		case 0x00820000: {
-			sprintf(bromv, "2007-09-10");
-			sprintf(cxdgg, "CXD2993GG");
-			sprintf(tlotr, "Samwise VA2");
-			switch(baryon) {
-				case 0x002E4000: {
-					sprintf(model, "PSP-3000 TA-095v2"); // (tachyon >> 16) & 0xF == 2
-					break;
-				}
-				case 0x012E4000: {
-					sprintf(model, "PSP-3000 TA-095v4"); // 07g
-					break;
-				}
-			}
-			break;
-		}
+		break;
 
-		case 0x00720000: {
-			sprintf(bromv, "2007-09-10");
-			sprintf(cxdgg, "CXD29??GG");
-			sprintf(model, "PSP-N1000 TA-091");
+		case 0x00720000:
 			sprintf(tlotr, "Strider");
-			break;
-		}
+			sprintf(bromv, "v3 (2007-09-10)");
+			sprintf(model, "%s", "PSP-N1000 TA-091");
+		break;
 
-		case 0x00900000: {
-			sprintf(bromv, "2007-09-10");
-			sprintf(cxdgg, "CXD2998GG");
-			sprintf(model, "PSP-E1000 TA-096/TA-097");
+		case 0x00810000:
+			sprintf(tlotr, "Samwise VA2");
+			sprintf(bromv, "v3 (2007-09-10)");
+			sprintf(model, "%s", "PSP-3000 TA-09");
+			switch(baryon) {
+				case 0x002C4000:
+					sprintf(model, "%s%s", model, "3v"); // TA-093v
+					switch(pommel) {
+						case 0x00000141:
+							sprintf(model, "%s%s", model, "1"); // TA-093v1
+						break;
+						case 0x00000143:
+							sprintf(model, "%s%s", model, "2"); // TA-093v2
+						break;
+						default:
+							flag = 1;
+							sprintf(model, "%s%s", model, "?"); // TA-093v?
+						break;
+					}
+				break;
+				case 0x002E4000:
+					sprintf(model, "%s%s", model, "5v1"); // TA-095v1
+				break;
+				case 0x012E4000:
+					sprintf(model, "%s%s", model, "5v3"); // TA-095v3 [07g]
+				break;
+				default:
+					flag = 1;
+					sprintf(model, "%s%s", model, "?"); // TA-09?
+				break;
+			}
+		break;
+
+		case 0x00820000:
+			sprintf(tlotr, "Samwise VA2");
+			sprintf(bromv, "v3 (2007-09-10)");
+			sprintf(model, "%s", "PSP-3000 TA-095v");
+			switch(baryon) {
+				case 0x002E4000:
+					sprintf(model, "%s%s", model, "2"); // TA-095v2
+				break;
+				case 0x012E4000:
+					sprintf(model, "%s%s", model, "4"); // TA-095v4 [07g]
+				break;
+				default:
+					flag = 1;
+					sprintf(model, "%s%s", model, "?"); // TA-095v?
+				break;
+			}
+		break;
+
+		case 0x00900000:
 			sprintf(tlotr, "Bilbo");
-			break;
-		}
+			sprintf(bromv, "v3 (2007-09-10)");
+			sprintf(model, "%s", "PSP-E1000 TA-096/TA-097");
+		break;
 
-		default: {
-			sprintf(bromv, "200?-??-??");
-			sprintf(cxdgg, "CXD29??GG");
-			sprintf(model, "PSP-???? TA-0??");
+		default:
+			flag = 1;
 			sprintf(tlotr, "???");
-			break;
-		}
+			sprintf(bromv, "v? (200?-??-??)");
+			sprintf(model, "%s", "PSP-?000 TA-0??");
+		break;
 	}
 
 	if ((generation == 4) && (baryon == 0x002E4000)) {
