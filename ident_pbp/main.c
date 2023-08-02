@@ -331,15 +331,14 @@ int main(int argc, char*argv[]) {
 		case 0x00810000: {
 			sprintf(bromv, "2007-09-10");
 			sprintf(cxdgg, "CXD2993GG");
+			sprintf(tlotr, "Samwise VA2");
 			switch(baryon) {
 				case 0x002C4000: {
 					sprintf(model, "PSP-3000 TA-093v%s", pommel == 0x00000141 ? "1" : pommel == 0x00000143 ? "2" : "?");
-					sprintf(tlotr, "Samwise VA2");
 					break;
 				}
 				case 0x002E4000: {
 					sprintf(model, "PSP-3000 TA-095v1"); // (tachyon >> 16) & 0xF == 1
-					sprintf(tlotr, "Samwise VA2");
 					break;
 				}
 			}
@@ -348,8 +347,17 @@ int main(int argc, char*argv[]) {
 		case 0x00820000: {
 			sprintf(bromv, "2007-09-10");
 			sprintf(cxdgg, "CXD2993GG");
-			sprintf(model, "PSP-3000 TA-095v2"); // (tachyon >> 16) & 0xF == 2
 			sprintf(tlotr, "Samwise VA2");
+			switch(baryon) {
+				case 0x002E4000: {
+					sprintf(model, "PSP-3000 TA-095v2");
+					break;
+				}
+				case 0x012E4000: {
+					sprintf(model, "PSP-3000 TA-095v3");
+					break;
+				}
+			}
 			break;
 		}
 
