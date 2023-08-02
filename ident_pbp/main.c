@@ -341,6 +341,10 @@ int main(int argc, char*argv[]) {
 					sprintf(model, "PSP-3000 TA-095v1"); // (tachyon >> 16) & 0xF == 1
 					break;
 				}
+				case 0x012E4000: {
+					sprintf(model, "PSP-3000 TA-095v3");
+					break;
+				}
 			}
 			break;
 		}
@@ -350,11 +354,11 @@ int main(int argc, char*argv[]) {
 			sprintf(tlotr, "Samwise VA2");
 			switch(baryon) {
 				case 0x002E4000: {
-					sprintf(model, "PSP-3000 TA-095v2");
+					sprintf(model, "PSP-3000 TA-095v2"); // (tachyon >> 16) & 0xF == 2
 					break;
 				}
 				case 0x012E4000: {
-					sprintf(model, "PSP-3000 TA-095v3");
+					sprintf(model, "PSP-3000 TA-095v4");
 					break;
 				}
 			}
