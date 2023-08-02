@@ -67,6 +67,21 @@ void savepict(const char*file) {
 	sceIoClose(fd);
 }
 
+void warn(void) {
+	pspDebugScreenSetTextColor(0xff007fff);
+	int i;
+	printf("\n");
+	for (i = 0; i < 51; i++)
+		printf("-");
+	printf("\n");
+	printf(" Please send this screenshot to the Yoti\'s GitHub!\n");
+	printf("  https://github.com/Yoti/psp_pspident/issues/new\n");
+	for (i = 0; i < 51; i++)
+		printf("-");
+	printf("\n");
+	pspDebugScreenSetTextColor(0xffffffff);
+}
+
 int main(int argc, char*argv[]) {
 	pspDebugScreenInit();
 	pspDebugScreenClear();
@@ -79,6 +94,7 @@ int main(int argc, char*argv[]) {
 		sceKernelExitGame();
 	}
 
+	int flag = 0;
 	u32 firmware = sceKernelDevkitVersion();
 
 	u32 generation = prxKernelGetModel() + 1;
@@ -94,7 +110,7 @@ int main(int argc, char*argv[]) {
 	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
 	char cxdgg[64]; memset(cxdgg, 0, sizeof(cxdgg));
 	char bromv[64]; memset(bromv, 0, sizeof(bromv)); // TODO: proper detection
-	char times[64]; memset(times, 0, sizeof(times)); // TODO: proper detection
+	char times[64]; memset(times, 0, sizeof(times)); sceSysconGetTimeStamp(times);
 /*
 	switch(tachyon) {
 		case 0x00140000:
@@ -105,23 +121,20 @@ int main(int argc, char*argv[]) {
 			switch(baryon) {
 				case: 0x00010600:
 					sprintf(model, "%s%s", model, "v1");
-					sprintf(times, "200409230625");
 				break;
 				case: 0x00020600:
 					sprintf(model, "%s%s", model, "v2");
-					sprintf(times, "200410071128");
 				break;
 				case: 0x00030600:
 					sprintf(model, "%s%s", model, "v3");
-					sprintf(times, "200411290757");
 				break;
 				default:
+					flag = 1;
 					sprintf(model, "%s%s", model, "v?");
-					sprintf(times, "YYYYMMDDHHMM");
 				break;
 			}
-
 		break;
+
 		case 0x00200000:
 			sprintf(tlotr, "First");
 			sprintf(bromv, "v1 (2004-04-20)");
@@ -130,24 +143,21 @@ int main(int argc, char*argv[]) {
 			switch(baryon) {
 				case: 0x00030600:
 					sprintf(model, "%s%s", model, "v4");
-					sprintf(times, "200411290757");
 				break;
 				case: 0x00040600:
 					sprintf(model, "%s%s", model, "v5");
-					sprintf(times, "200504040852");
 				break;
 				default:
+					flag = 1;
 					sprintf(model, "%s%s", model, "v?");
-					sprintf(times, "YYYYMMDDHHMM");
 				break;
 			}
-
 		break;
+
 		case 0x00300000:
 			sprintf(tlotr, "First");
 			sprintf(bromv, "v1 (2004-04-20)");
 			sprintf(model, "%s", "PSP-1000 TA-081");
-			sprintf(times, "200504040852");
 
 			switch(pommel) {
 				case: 0x00000103:
@@ -156,12 +166,13 @@ int main(int argc, char*argv[]) {
 				case: 0x00000104:
 					sprintf(model, "%s%s", model, "v2");
 				break;
-				case: 0x00000103:
+				default:
+					flag = 1;
 					sprintf(model, "%s%s", model, "v?");
 				break;
 			}
-
 		break;
+
 		case 0x00400000:
 			sprintf(tlotr, "Legolas");
 			sprintf(bromv, "v2 (2005-01-04)");
@@ -171,21 +182,19 @@ int main(int argc, char*argv[]) {
 				case: 0x00114000:
 					sprintf(tlotr, "%s%s", tlotr, "1"); // Legolas1
 					sprintf(model, "%s%s", model, "2"); // TA-082
-					sprintf(times, "200509260441");
 				break;
 				case: 0x00121000:
 					sprintf(tlotr, "%s%s", tlotr, "2"); // Legolas2
 					sprintf(model, "%s%s", model, "6"); // TA-086
-					sprintf(times, "200512200558");
 				break;
 				default:
+					flag = 1;
 					sprintf(tlotr, "%s%s", tlotr, "?"); // Legolas?
 					sprintf(model, "%s%s", model, "?"); // TA-08?
-					sprintf(times, "YYYYMMDDHHMM");
 				break;
 			}
-
 		break;
+
 		case 0x00500000:
 			sprintf(tlotr, "Frodo");
 			sprintf(bromv, "v2 (2005-01-04)");
@@ -194,14 +203,11 @@ int main(int argc, char*argv[]) {
 			switch(baryon) {
 				case: 0x0022B200:
 					sprintf(model, "%s%s", model, "85v1"); // TA-085v1
-					sprintf(times, "200704161420");
 				break;
 				case: 0x00234000:
 					sprintf(model, "%s%s", model, "85v2"); // TA-085v2
-					sprintf(times, "200710022249");
 				break;
 				case: 0x00243000:
-					sprintf(times, "200711022212");
 					switch(pommel) {
 						case 0x00000123:
 							sprintf(model, "%s%s", model, "88v1/v2"); // TA-088v1/v2
@@ -210,13 +216,14 @@ int main(int argc, char*argv[]) {
 							sprintf(model, "%s%s", model, "90v1"); // TA-090v1
 						break;
 						default:
+							flag = 1;
 							sprintf(model, "%s%s", model, "??"); // TA-0??
 						break;
 					}
 				break;
 				default:
+					flag = 1;
 					sprintf(model, "%s%s", model, "??"); // TA-0??
-					sprintf(times, "YYYYMMDDHHMM");
 				break;
 			}
 
@@ -342,7 +349,7 @@ int main(int argc, char*argv[]) {
 					break;
 				}
 				case 0x012E4000: {
-					sprintf(model, "PSP-3000 TA-095v3");
+					sprintf(model, "PSP-3000 TA-095v3"); // 07g
 					break;
 				}
 			}
@@ -358,7 +365,7 @@ int main(int argc, char*argv[]) {
 					break;
 				}
 				case 0x012E4000: {
-					sprintf(model, "PSP-3000 TA-095v4");
+					sprintf(model, "PSP-3000 TA-095v4"); // 07g
 					break;
 				}
 			}
@@ -396,10 +403,11 @@ int main(int argc, char*argv[]) {
 		sprintf(model, "%s (%02ig)", model, generation);
 	}
 
-	printf(" * %-10s v%x.%x%x (", "Firmware", firmware >> 24, (firmware >> 16) & 0xff, (firmware >> 8) & 0xff);
+	printf(" * %-10s %x.%x%x (", "Firmware", firmware >> 24,
+			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff);
 	printf("0x%08x)\n", firmware);
 	printf(" * %-10s 0x%08x [%s]\n", "Tachyon", tachyon, bromv);
-	printf(" * %-10s 0x%08x [%s]\n", "Baryon", baryon, "times");
+	printf(" * %-10s 0x%08x [%s]\n", "Baryon", baryon, times);
 	printf(" * %-10s 0x%08x\n", "Pommel", pommel);
 	printf(" * %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
 	if (generation != 5) {
@@ -411,6 +419,9 @@ int main(int argc, char*argv[]) {
 
 	printf(" * %s\n", model);
 	printf(" * Call me [%s], Gandalf!\n", tlotr);
+
+	if (flag)
+		warn();
 
 	sceKernelDelayThread(1*1000*1000);
 
