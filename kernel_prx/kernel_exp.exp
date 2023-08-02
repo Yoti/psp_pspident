@@ -9,6 +9,7 @@ PSP_BEGIN_EXPORTS
 		PSP_EXPORT_FUNC_HASH(prxKernelGetModel)
 		PSP_EXPORT_FUNC_HASH(prxSysconGetBaryonVersion)
 		PSP_EXPORT_FUNC_HASH(prxSysconGetPommelVersion)
+		PSP_EXPORT_FUNC_HASH(sceSysconGetTimeStamp)
 		PSP_EXPORT_FUNC_HASH(prxSysregGetFuseConfig)
 		PSP_EXPORT_FUNC_HASH(prxSysregGetFuseId)
 		PSP_EXPORT_FUNC_HASH(prxSysregGetKirkVersion)

@@ -32,6 +32,15 @@ u32 prxSysconGetPommelVersion(u32*pommel) {
 	return pv;
 }
 
+// https://github.com/galaxyhaxz/psp-detect
+s32 sceSyscon_driver_7BCC5EAE(char*ts);
+s32 sceSysconGetTimeStamp(char*ts) {
+	int k1 = pspSdkSetK1(0);
+	s32 ret = sceSyscon_driver_7BCC5EAE(ts);
+	pspSdkSetK1(k1);
+	return ret;
+}
+
 u32 sceSysreg_driver_8F4F4E96(void);
 u32 prxSysregGetFuseConfig(void) {
 	int k1 = pspSdkSetK1(0);

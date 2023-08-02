@@ -1,6 +1,7 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspctrl.h>
+#include <pspge.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -8,12 +9,63 @@
 #define VER_MINOR 0
 #define VER_BUILD ""
 
-PSP_MODULE_INFO("ident", 0, VER_MAJOR, VER_MINOR);
+PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);
 PSP_MAIN_THREAD_ATTR(0);
 PSP_HEAP_SIZE_KB(1024);
 
 #include "../kernel_prx/kernel_prx.h"
 #define printf pspDebugScreenPrintf
+
+u32*vramaddr(int x, int y) {
+	u32 *vram;
+
+	vram = (void *)(0x40000000 | (u32)sceGeEdramGetAddr());
+	vram += x;
+	vram += y * 512;
+
+	return vram;
+}
+
+u8 picthead[] = {
+	0x42, 0x4D, 0x36, 0xFA, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x36, 0x00, 0x00, 0x00, 0x28, 0x00,
+	0x00, 0x00, 0xE0, 0x01, 0x00, 0x00, 0x10, 0x01, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+void savepict(const char*file) {
+	int h, w;
+
+	SceUID fd = sceIoOpen(file, PSP_O_CREAT | PSP_O_TRUNC | PSP_O_RDWR, 0777);
+	sceIoWrite(fd, picthead, sizeof(picthead));
+
+	u32*vptr0 = vramaddr(0, 272 - 1);
+
+	for (h = 0; h < 272; h++) {
+		u32*vptr = vptr0;
+		u8 buffer[512 * 3];
+		int bufidx = 0;
+
+		for (w = 0; w < 480; w++) {
+			u32 p = *vptr;
+
+			u8 r = (p & 0x000000FFL);
+			u8 g = (p & 0x0000FF00L) >> 8;
+			u8 b = (p & 0x00FF0000L) >> 16;
+
+			buffer[bufidx] = b; bufidx++;
+			buffer[bufidx] = g; bufidx++;
+			buffer[bufidx] = r; bufidx++;
+
+			vptr++;
+		}
+
+		sceIoWrite(fd, buffer, 480 * 3);
+		vptr0 -= 512;
+	}
+
+	sceIoClose(fd);
+}
 
 int main(int argc, char*argv[]) {
 	pspDebugScreenInit();
@@ -349,13 +401,29 @@ int main(int argc, char*argv[]) {
 	printf(" * Call me [%s], Gandalf!\n", tlotr);
 
 	sceKernelDelayThread(1*1000*1000);
-	/*
-	sceIoMkdir("ms0:/PICTURE", 0777);
-	sceIoMkdir("ms0:/PICTURE/pspIdent", 0777);
-	printf("Screenshot was saved to ...");
-	*/
 
-	sceKernelDelayThread(9*1000*1000);
+	char dir[128] = "\0";
+	sprintf(dir, "%c%c0:/PICTURE", argv[0][0], argv[0][1]);
+	sceIoMkdir(dir, 0777);
+	sprintf(dir, "%s/pspIdent", dir);
+	sceIoMkdir(dir, 0777);
+
+	int i;
+	SceUID fd;
+	char file[128] = "\0";
+	for (i = 0; i < 999; i++) {
+		sprintf(file, "%s/ident%03i.bmp", dir, i);
+		fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
+		if (fd < 0) {
+			savepict(file);
+			break;
+		} else {
+			sceIoClose(fd);
+		}
+	}
+	printf("\n Screenshot was saved to %s!\n", file);
+
+	sceKernelDelayThread(4*1000*1000);
 	sceKernelExitGame();
 
 	return 0;
