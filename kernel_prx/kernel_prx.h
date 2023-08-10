@@ -1,4 +1,5 @@
 u32 prxKernelGetModel(void);
+u32 prxKernelGetTimeStamp(void);
 u32 prxSysconGetBaryonVersion(u32*baryon);
 u32 prxSysconGetPommelVersion(u32*pommel);
 s32 sceSysconGetTimeStamp(char*ts);

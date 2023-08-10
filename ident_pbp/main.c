@@ -99,6 +99,7 @@ int main(int argc, char*argv[]) {
 
 	u32 generation = prxKernelGetModel() + 1;
 	u32 baryon; prxSysconGetBaryonVersion(&baryon);
+	u32 bromver = prxKernelGetTimeStamp();
 	u32 pommel; prxSysconGetPommelVersion(&pommel);
 	u32 fusecfg = prxSysregGetFuseConfig();
 	u64 fuseid = prxSysregGetFuseId();
@@ -108,13 +109,11 @@ int main(int argc, char*argv[]) {
 
 	char model[64]; memset(model, 0, sizeof(model));
 	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
-	char bromv[64]; memset(bromv, 0, sizeof(bromv)); // TODO: proper detection
 	char times[64]; memset(times, 0, sizeof(times)); sceSysconGetTimeStamp(times);
 
 	switch(tachyon) {
 		case 0x00140000:
 			sprintf(tlotr, "First");
-			sprintf(bromv, "v1 (2004-04-20)");
 			sprintf(model, "%s", "PSP-1000 TA-079");
 
 			switch(baryon) {
@@ -136,7 +135,6 @@ int main(int argc, char*argv[]) {
 
 		case 0x00200000:
 			sprintf(tlotr, "First");
-			sprintf(bromv, "v1 (2004-04-20)");
 			sprintf(model, "%s", "PSP-1000 TA-079");
 
 			switch(baryon) {
@@ -155,7 +153,6 @@ int main(int argc, char*argv[]) {
 
 		case 0x00300000:
 			sprintf(tlotr, "First");
-			sprintf(bromv, "v1 (2004-04-20)");
 			sprintf(model, "%s", "PSP-1000 TA-081");
 
 			switch(pommel) {
@@ -174,7 +171,6 @@ int main(int argc, char*argv[]) {
 
 		case 0x00400000:
 			sprintf(tlotr, "Legolas");
-			sprintf(bromv, "v2 (2005-01-04)");
 			sprintf(model, "%s", "PSP-1000 TA-08");
 
 			switch(baryon) {
@@ -196,7 +192,6 @@ int main(int argc, char*argv[]) {
 
 		case 0x00500000:
 			sprintf(tlotr, "Frodo");
-			sprintf(bromv, "v2 (2005-01-04)");
 			sprintf(model, "%s", "PSP-2000 TA-0");
 
 			switch(baryon) {
@@ -229,9 +224,7 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00600000:
-			sprintf(bromv, "v3 (2007-09-10)");
 			sprintf(model, "%s", "PSP-");
-
 			switch(baryon) {
 				case 0x00243000:
 					sprintf(tlotr, "Frodo");
@@ -267,13 +260,11 @@ int main(int argc, char*argv[]) {
 
 		case 0x00720000:
 			sprintf(tlotr, "Strider");
-			sprintf(bromv, "v3 (2007-09-10)");
 			sprintf(model, "%s", "PSP-N1000 TA-091");
 		break;
 
 		case 0x00810000:
 			sprintf(tlotr, "Samwise VA2");
-			sprintf(bromv, "v3 (2007-09-10)");
 			sprintf(model, "%s", "PSP-3000 TA-09");
 			switch(baryon) {
 				case 0x002C4000:
@@ -292,10 +283,10 @@ int main(int argc, char*argv[]) {
 					}
 				break;
 				case 0x002E4000:
-					sprintf(model, "%s%s", model, "5v1"); // TA-095v1
+					sprintf(model, "%s%s/v1a", model, "5v1"); // TA-095v1
 				break;
 				case 0x012E4000:
-					sprintf(model, "%s%s", model, "5v3"); // TA-095v3 [07g]
+					sprintf(model, "%s%s/v1b", model, "5v3"); // TA-095v3 [07g]
 				break;
 				default:
 					flag = 1;
@@ -306,14 +297,13 @@ int main(int argc, char*argv[]) {
 
 		case 0x00820000:
 			sprintf(tlotr, "Samwise VA2");
-			sprintf(bromv, "v3 (2007-09-10)");
 			sprintf(model, "%s", "PSP-3000 TA-095v");
 			switch(baryon) {
 				case 0x002E4000:
-					sprintf(model, "%s%s", model, "2"); // TA-095v2
+					sprintf(model, "%s%s/v2a", model, "2"); // TA-095v2
 				break;
 				case 0x012E4000:
-					sprintf(model, "%s%s", model, "4"); // TA-095v4 [07g]
+					sprintf(model, "%s%s/v2b", model, "4"); // TA-095v4 [07g]
 				break;
 				default:
 					flag = 1;
@@ -324,14 +314,12 @@ int main(int argc, char*argv[]) {
 
 		case 0x00900000:
 			sprintf(tlotr, "Bilbo");
-			sprintf(bromv, "v3 (2007-09-10)");
 			sprintf(model, "%s", "PSP-E1000 TA-096/TA-097");
 		break;
 
 		default:
 			flag = 1;
 			sprintf(tlotr, "???");
-			sprintf(bromv, "v? (200?-??-??)");
 			sprintf(model, "%s", "PSP-?000 TA-0??");
 		break;
 	}
@@ -345,7 +333,7 @@ int main(int argc, char*argv[]) {
 	printf(" * %-10s %x.%x%x (", "Firmware", firmware >> 24,
 			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff);
 	printf("0x%08x)\n", firmware);
-	printf(" * %-10s 0x%08x [%s]\n", "Tachyon", tachyon, bromv);
+	printf(" * %-10s 0x%08x [%08x]\n", "Tachyon", tachyon, bromver);
 	printf(" * %-10s 0x%08x [%s]\n", "Baryon", baryon, times);
 	printf(" * %-10s 0x%08x\n", "Pommel", pommel);
 	printf(" * %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);

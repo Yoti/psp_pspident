@@ -2,8 +2,9 @@
 
 #include "pspstub.s"
 
-	STUB_START "kernel_prx",0x40090000,0x00090005
+	STUB_START "kernel_prx",0x40090000,0x000A0005
 	STUB_FUNC  0x06E85124,prxKernelGetModel
+	STUB_FUNC  0xFD5B43C6,prxKernelGetTimeStamp
 	STUB_FUNC  0x20C62D28,prxSysconGetBaryonVersion
 	STUB_FUNC  0xE743F67D,prxSysconGetPommelVersion
 	STUB_FUNC  0x7BCC5EAE,sceSysconGetTimeStamp

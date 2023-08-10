@@ -16,6 +16,13 @@ u32 prxKernelGetModel(void) {
 	return g;
 }
 
+// Draan
+u32 prxKernelGetTimeStamp(void) {
+	u32 ts;
+	asm volatile("cfc0 %0, $17" : "=r" (ts));
+	return ts;
+}
+
 u32 sceSyscon_driver_7EC5A957(u32*baryon);
 u32 prxSysconGetBaryonVersion(u32*baryon) {
 	int k1 = pspSdkSetK1(0);
