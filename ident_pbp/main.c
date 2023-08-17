@@ -72,7 +72,6 @@ void savepict(const char*file) {
 void warn(void) {
 	pspDebugScreenSetTextColor(0xff007fff);
 	int i;
-	printf("\n");
 	for (i = 0; i < 51; i++)
 		printf("-");
 	printf("\n");
@@ -80,7 +79,7 @@ void warn(void) {
 	printf("  https://github.com/Yoti/psp_pspident/issues/new\n");
 	for (i = 0; i < 51; i++)
 		printf("-");
-	printf("\n");
+	printf("\n\n");
 	pspDebugScreenSetTextColor(0xffffffff);
 }
 
@@ -107,15 +106,16 @@ int main(int argc, char*argv[]) {
 	u32 baryon; prxSysconGetBaryonVersion(&baryon);
 	u32 bromver = prxTachyonGetTimeStamp();
 	u32 pommel; prxSysconGetPommelVersion(&pommel);
+	u32 polestar; u32 polestar_ret = prxSysconGetPolestarVersion(&polestar);
 	u32 fusecfg = prxSysregGetFuseConfig();
 	u64 fuseid = prxSysregGetFuseId();
 	char kirk[4]; *(u32*)kirk = prxSysregGetKirkVersion();
 	char spock[4]; *(u32*)spock = prxSysregGetSpockVersion();
 	u32 tachyon = prxSysregGetTachyonVersion();
 
-	char model[64]; memset(model, 0, sizeof(model));
-	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
-	char times[64]; memset(times, 0, sizeof(times)); prxSysconGetTimeStamp(times);
+	char model[64] = "\0";
+	char tlotr[64] = "\0";
+	char times[64] = "\0"; prxSysconGetTimeStamp(times);
 
 	switch(tachyon) {
 		case 0x00140000:
@@ -181,17 +181,17 @@ int main(int argc, char*argv[]) {
 
 			switch(baryon) {
 				case 0x00114000:
-					sprintf(tlotr, "%s%s", tlotr, "1"); // Legolas1
-					sprintf(model, "%s%s", model, "2"); // TA-082
+					sprintf(tlotr, "%s1", tlotr); // Legolas1
+					sprintf(model, "%s2", model); // TA-082
 				break;
 				case 0x00121000:
-					sprintf(tlotr, "%s%s", tlotr, "2"); // Legolas2
-					sprintf(model, "%s%s", model, "6"); // TA-086
+					sprintf(tlotr, "%s2", tlotr); // Legolas2
+					sprintf(model, "%s6", model); // TA-086
 				break;
 				default:
 					flag = 1;
-					sprintf(tlotr, "%s%s", tlotr, "?"); // Legolas?
-					sprintf(model, "%s%s", model, "?"); // TA-08?
+					sprintf(tlotr, "%s?", tlotr); // Legolas?
+					sprintf(model, "%s?", model); // TA-08?
 				break;
 			}
 		break;
@@ -342,6 +342,7 @@ int main(int argc, char*argv[]) {
 	printf(" * %-10s 0x%08x [%08x]\n", "Tachyon", tachyon, bromver);
 	printf(" * %-10s 0x%08x [%s]\n", "Baryon", baryon, times);
 	printf(" * %-10s 0x%08x\n", "Pommel", pommel);
+	printf(" * %-10s 0x%08x (ret=%08x)\n", "Polestar", polestar, polestar_ret);
 	printf(" * %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
 	if (generation != 5) {
 		printf(" * %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
@@ -375,22 +376,30 @@ int main(int argc, char*argv[]) {
 			char dir[128] = "\0";
 			sprintf(dir, "%c%c0:/PICTURE", argv[0][0], argv[0][1]);
 			sceIoMkdir(dir, 0777);
-			sprintf(dir, "%s/pspIdent", dir);
+			strcat(dir, "/pspIdent");
 			sceIoMkdir(dir, 0777);
 
 			SceUID fd;
-			char file[128] = "\0";
 			pspTime time;
-			sceRtcGetCurrentClockLocalTime(&time);
-			sprintf(file, "%s/%04d%02d%02d_%02d%02d%02d.bmp", dir,
-					time.year, time.month, time.day,
-					time.hour, time.minutes, time.seconds);
-			savepict(file);
+			char file[128] = "\0";
+			for(;;) {
+				sceRtcGetCurrentClockLocalTime(&time);
+				sprintf(file, "%s/%04d%02d%02d_%02d%02d%02d.bmp", dir,
+						time.year, time.month, time.day,
+						time.hour, time.minutes, time.seconds);
+				fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
+				if (fd < 0) {
+					savepict(file);
+					break;
+				} else {
+					sceIoClose(fd);
+				}
+				sceKernelDelayThread(1*1000*1000);
+			}
 
 			printf(" Screenshot was saved to %s!\n", file);
 			printf(" The program will automatically quit after 4 seconds\n");
 			sceKernelDelayThread(4*1000*1000);
-
 			break;
 		} else if (pad.Buttons & PSP_CTRL_CIRCLE) {
 			break;

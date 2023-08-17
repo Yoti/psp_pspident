@@ -24,9 +24,7 @@ u32 prxSysconGetBaryonVersion(u32*baryon) {
 	return bv;
 }
 
-// -----------------------------------------------
 // https://uofw.github.io/uofw/group__Syscon.html
-// -----------------------------------------------
 u32 sceSyscon_driver_FB148FB6(u32*polestar);
 u32 prxSysconGetPolestarVersion(u32*polestar) {
 	int k1 = pspSdkSetK1(0);
@@ -34,7 +32,6 @@ u32 prxSysconGetPolestarVersion(u32*polestar) {
 	pspSdkSetK1(k1);
 	return pv;
 }
-// -----------------------------------------------
 
 u32 sceSyscon_driver_E7E87741(u32*pommel);
 u32 prxSysconGetPommelVersion(u32*pommel) {
