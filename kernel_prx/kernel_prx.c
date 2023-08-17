@@ -16,13 +16,6 @@ u32 prxKernelGetModel(void) {
 	return g;
 }
 
-// Draan
-u32 prxKernelGetTimeStamp(void) {
-	u32 ts;
-	asm volatile("cfc0 %0, $17" : "=r" (ts));
-	return ts;
-}
-
 u32 sceSyscon_driver_7EC5A957(u32*baryon);
 u32 prxSysconGetBaryonVersion(u32*baryon) {
 	int k1 = pspSdkSetK1(0);
@@ -30,6 +23,18 @@ u32 prxSysconGetBaryonVersion(u32*baryon) {
 	pspSdkSetK1(k1);
 	return bv;
 }
+
+// -----------------------------------------------
+// https://uofw.github.io/uofw/group__Syscon.html
+// -----------------------------------------------
+u32 sceSyscon_driver_FB148FB6(u32*polestar);
+u32 prxSysconGetPolestarVersion(u32*polestar) {
+	int k1 = pspSdkSetK1(0);
+	u32 pv = sceSyscon_driver_FB148FB6(polestar);
+	pspSdkSetK1(k1);
+	return pv;
+}
+// -----------------------------------------------
 
 u32 sceSyscon_driver_E7E87741(u32*pommel);
 u32 prxSysconGetPommelVersion(u32*pommel) {
@@ -41,7 +46,7 @@ u32 prxSysconGetPommelVersion(u32*pommel) {
 
 // https://github.com/galaxyhaxz/psp-detect
 s32 sceSyscon_driver_7BCC5EAE(char*ts);
-s32 sceSysconGetTimeStamp(char*ts) {
+s32 prxSysconGetTimeStamp(char*ts) {
 	int k1 = pspSdkSetK1(0);
 	s32 ret = sceSyscon_driver_7BCC5EAE(ts);
 	pspSdkSetK1(k1);
@@ -90,6 +95,17 @@ u32 prxSysregGetTachyonVersion(void) {
 	u32 tv = sceSysreg_driver_E2A5D1EE();
 	pspSdkSetK1(k1);
 	return tv;
+}
+
+// Draan
+u32 prxTachyonGetTimeStamp(void) {
+	u32 ts;
+	asm volatile("cfc0 %0, $17" : "=r" (ts));
+	return ts;
+}
+
+void IgnoreMe(void) {
+	//
 }
 
 int module_stop(void) {

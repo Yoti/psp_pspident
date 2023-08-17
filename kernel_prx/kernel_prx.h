@@ -1,10 +1,10 @@
 u32 prxKernelGetModel(void);
-u32 prxKernelGetTimeStamp(void);
 u32 prxSysconGetBaryonVersion(u32*baryon);
 u32 prxSysconGetPommelVersion(u32*pommel);
-s32 sceSysconGetTimeStamp(char*ts);
+s32 prxSysconGetTimeStamp(char*ts);
 u32 prxSysregGetFuseConfig(void);
 u64 prxSysregGetFuseId(void);
 u32 prxSysregGetKirkVersion(void);
 u32 prxSysregGetSpockVersion(void);
 u32 prxSysregGetTachyonVersion(void);
+u32 prxTachyonGetTimeStamp(void);

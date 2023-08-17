@@ -1,13 +1,15 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspctrl.h>
+#include <pspdisplay.h>
 #include <pspge.h>
+#include <psprtc.h>
 #include <stdio.h>
 #include <string.h>
 
 #define VER_MAJOR 1
 #define VER_MINOR 0
-#define VER_BUILD ""
+#define VER_BUILD "-beta"
 
 PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);
 PSP_MAIN_THREAD_ATTR(0);
@@ -94,12 +96,16 @@ int main(int argc, char*argv[]) {
 		sceKernelExitGame();
 	}
 
+	SceCtrlData pad;
+	sceCtrlSetSamplingCycle(0);
+	sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
+
 	int flag = 0;
 	u32 firmware = sceKernelDevkitVersion();
 
 	u32 generation = prxKernelGetModel() + 1;
 	u32 baryon; prxSysconGetBaryonVersion(&baryon);
-	u32 bromver = prxKernelGetTimeStamp();
+	u32 bromver = prxTachyonGetTimeStamp();
 	u32 pommel; prxSysconGetPommelVersion(&pommel);
 	u32 fusecfg = prxSysregGetFuseConfig();
 	u64 fuseid = prxSysregGetFuseId();
@@ -109,62 +115,62 @@ int main(int argc, char*argv[]) {
 
 	char model[64]; memset(model, 0, sizeof(model));
 	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
-	char times[64]; memset(times, 0, sizeof(times)); sceSysconGetTimeStamp(times);
+	char times[64]; memset(times, 0, sizeof(times)); prxSysconGetTimeStamp(times);
 
 	switch(tachyon) {
 		case 0x00140000:
 			sprintf(tlotr, "First");
-			sprintf(model, "%s", "PSP-1000 TA-079");
+			sprintf(model, "%s", "PSP-1000 TA-079v");
 
 			switch(baryon) {
 				case 0x00010600:
-					sprintf(model, "%s%s", model, "v1");
+					sprintf(model, "%s1", model);
 				break;
 				case 0x00020600:
-					sprintf(model, "%s%s", model, "v2");
+					sprintf(model, "%s2", model);
 				break;
 				case 0x00030600:
-					sprintf(model, "%s%s", model, "v3");
+					sprintf(model, "%s3", model);
 				break;
 				default:
 					flag = 1;
-					sprintf(model, "%s%s", model, "v?");
+					sprintf(model, "%s?", model);
 				break;
 			}
 		break;
 
 		case 0x00200000:
 			sprintf(tlotr, "First");
-			sprintf(model, "%s", "PSP-1000 TA-079");
+			sprintf(model, "%s", "PSP-1000 TA-079v");
 
 			switch(baryon) {
 				case 0x00030600:
-					sprintf(model, "%s%s", model, "v4");
+					sprintf(model, "%s4", model);
 				break;
 				case 0x00040600:
-					sprintf(model, "%s%s", model, "v5");
+					sprintf(model, "%s5", model);
 				break;
 				default:
 					flag = 1;
-					sprintf(model, "%s%s", model, "v?");
+					sprintf(model, "%s?", model);
 				break;
 			}
 		break;
 
 		case 0x00300000:
 			sprintf(tlotr, "First");
-			sprintf(model, "%s", "PSP-1000 TA-081");
+			sprintf(model, "%s", "PSP-1000 TA-081v");
 
 			switch(pommel) {
 				case 0x00000103:
-					sprintf(model, "%s%s", model, "v1");
+					sprintf(model, "%s1", model);
 				break;
 				case 0x00000104:
-					sprintf(model, "%s%s", model, "v2");
+					sprintf(model, "%s2", model);
 				break;
 				default:
 					flag = 1;
-					sprintf(model, "%s%s", model, "v?");
+					sprintf(model, "%s?", model);
 				break;
 			}
 		break;
@@ -345,36 +351,63 @@ int main(int argc, char*argv[]) {
 	printf(" * %-10s %02ig\n\n", "Generation", generation);
 
 	printf(" * %s\n", model);
-	printf(" * Call me [%s], Gandalf!\n", tlotr);
+	printf(" * Call me [%s], Gandalf!\n\n", tlotr);
 
 	if (flag)
 		warn();
 
 	sceKernelDelayThread(1*1000*1000);
 
-	char dir[128] = "\0";
-	sprintf(dir, "%c%c0:/PICTURE", argv[0][0], argv[0][1]);
-	sceIoMkdir(dir, 0777);
-	sprintf(dir, "%s/pspIdent", dir);
-	sceIoMkdir(dir, 0777);
+	printf(" Press X to save screenshot\n");
+	printf(" Press O to quit the program\n");
+	for(;;) {
+		sceCtrlReadBufferPositive(&pad, 1);
+		if (pad.Buttons & PSP_CTRL_CROSS) {
+			int i;
+			pspDebugScreenSetXY(0, pspDebugScreenGetY()-2);
+			for (i = 0; i < 32; i++)
+				printf(" ");
+			pspDebugScreenSetXY(0, pspDebugScreenGetY()+1);
+			for (i = 0; i < 32; i++)
+				printf(" ");
+			pspDebugScreenSetXY(0, pspDebugScreenGetY()-1);
 
-	int i;
-	SceUID fd;
-	char file[128] = "\0";
-	for (i = 0; i < 999; i++) {
-		sprintf(file, "%s/ident%03i.bmp", dir, i);
-		fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
-		if (fd < 0) {
-			savepict(file);
+			char dir[128] = "\0";
+			sprintf(dir, "%c%c0:/PICTURE", argv[0][0], argv[0][1]);
+			sceIoMkdir(dir, 0777);
+			strcpy(dir, "/pspIdent");
+			sceIoMkdir(dir, 0777);
+
+			SceUID fd;
+			char file[128] = "\0";
+			/*
+			pspTime time;
+			sceRtcGetCurrentClockLocalTime(&time);
+			sprintf(file, "%s/ident_%04d%02d%02d_%02d%02d%02d.bmp", dir,
+					time.year, time.month, time.day,
+					time.hour, time.minutes, time.seconds);
+			*/
+			for (i = 0; i < 999; i++) {
+				sprintf(file, "%s/ident%03i.bmp", dir, i);
+				fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
+				if (fd < 0) {
+					savepict(file);
+					break;
+				} else {
+					sceIoClose(fd);
+				}
+			}
+			printf(" Screenshot was saved to %s!\n", file);
+			printf(" The program will automatically quit after 4 seconds\n");
+			sceKernelDelayThread(4*1000*1000);
+
 			break;
-		} else {
-			sceIoClose(fd);
+		} else if (pad.Buttons & PSP_CTRL_CIRCLE) {
+			break;
 		}
+		sceDisplayWaitVblank();
 	}
-	printf("\n Screenshot was saved to %s!\n", file);
 
-	sceKernelDelayThread(4*1000*1000);
 	sceKernelExitGame();
-
 	return 0;
 }
