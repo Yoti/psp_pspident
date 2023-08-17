@@ -1,6 +1,8 @@
+rm -f EBOOT.PBP
 cd ident_pbp/
 make clean
 cd ../
+rm -f kernel.prx
 cd kernel_prx/
 make clean
 make

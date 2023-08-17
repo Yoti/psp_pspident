@@ -100,18 +100,18 @@ int main(int argc, char*argv[]) {
 	sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
 
 	int flag = 0;
-	u32 firmware = sceKernelDevkitVersion();
+	int firmware = sceKernelDevkitVersion();
 
-	u32 generation = prxKernelGetModel() + 1;
-	u32 baryon; prxSysconGetBaryonVersion(&baryon);
-	u32 bromver = prxTachyonGetTimeStamp();
-	u32 pommel; prxSysconGetPommelVersion(&pommel);
-	u32 polestar; u32 polestar_ret = prxSysconGetPolestarVersion(&polestar);
-	u32 fusecfg = prxSysregGetFuseConfig();
+	int generation = prxKernelGetModel() + 1;
+	int baryon; prxSysconGetBaryonVersion(&baryon);
+	int bromver = prxTachyonGetTimeStamp();
+	int pommel; prxSysconGetPommelVersion(&pommel);
+	int polestar; prxSysconGetPolestarVersion(&polestar);
+	int fusecfg = prxSysregGetFuseConfig();
 	u64 fuseid = prxSysregGetFuseId();
-	char kirk[4]; *(u32*)kirk = prxSysregGetKirkVersion();
-	char spock[4]; *(u32*)spock = prxSysregGetSpockVersion();
-	u32 tachyon = prxSysregGetTachyonVersion();
+	char kirk[4]; *(int*)kirk = prxSysregGetKirkVersion();
+	char spock[4]; *(int*)spock = prxSysregGetSpockVersion();
+	int tachyon = prxSysregGetTachyonVersion();
 
 	char model[64] = "\0";
 	char tlotr[64] = "\0";
@@ -342,7 +342,7 @@ int main(int argc, char*argv[]) {
 	printf(" * %-10s 0x%08x [%08x]\n", "Tachyon", tachyon, bromver);
 	printf(" * %-10s 0x%08x [%s]\n", "Baryon", baryon, times);
 	printf(" * %-10s 0x%08x\n", "Pommel", pommel);
-	printf(" * %-10s 0x%08x (ret=%08x)\n", "Polestar", polestar, polestar_ret);
+	printf(" * %-10s 0x%08x\n", "Polestar", polestar);
 	printf(" * %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
 	if (generation != 5) {
 		printf(" * %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);

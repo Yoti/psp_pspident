@@ -15,7 +15,7 @@ USE_KERNEL_LIBS = 1
 
 LIBDIR = 
 LIBS = 
-LDFLAGS = -mno-crt0 -nostartfiles
+LDFLAGS = -nostartfiles
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak

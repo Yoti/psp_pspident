@@ -1,6 +1,7 @@
 # Prerequisites
 *.d
 *.SFO
+*.S
 
 # Object files
 *.o
