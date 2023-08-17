@@ -375,28 +375,18 @@ int main(int argc, char*argv[]) {
 			char dir[128] = "\0";
 			sprintf(dir, "%c%c0:/PICTURE", argv[0][0], argv[0][1]);
 			sceIoMkdir(dir, 0777);
-			strcpy(dir, "/pspIdent");
+			sprintf(dir, "%s/pspIdent", dir);
 			sceIoMkdir(dir, 0777);
 
 			SceUID fd;
 			char file[128] = "\0";
-			/*
 			pspTime time;
 			sceRtcGetCurrentClockLocalTime(&time);
-			sprintf(file, "%s/ident_%04d%02d%02d_%02d%02d%02d.bmp", dir,
+			sprintf(file, "%s/%04d%02d%02d_%02d%02d%02d.bmp", dir,
 					time.year, time.month, time.day,
 					time.hour, time.minutes, time.seconds);
-			*/
-			for (i = 0; i < 999; i++) {
-				sprintf(file, "%s/ident%03i.bmp", dir, i);
-				fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
-				if (fd < 0) {
-					savepict(file);
-					break;
-				} else {
-					sceIoClose(fd);
-				}
-			}
+			savepict(file);
+
 			printf(" Screenshot was saved to %s!\n", file);
 			printf(" The program will automatically quit after 4 seconds\n");
 			sceKernelDelayThread(4*1000*1000);
