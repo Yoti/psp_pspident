@@ -1,4 +1,5 @@
 int prxKernelGetModel(void);
+int prxNandGetScramble(void);
 int prxSysconGetBaryonVersion(int*baryon);
 int prxSysconGetPolestarVersion(int*polestar);
 int prxSysconGetPommelVersion(int*pommel);

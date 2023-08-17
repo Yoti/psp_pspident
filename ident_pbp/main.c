@@ -18,6 +18,13 @@ PSP_HEAP_SIZE_KB(1024);
 #include "../kernel_prx/kernel_prx.h"
 #define printf pspDebugScreenPrintf
 
+#define color(x) pspDebugScreenSetTextColor(x)
+#define RED 0xff0000ff
+#define BLUE 0xffff0000
+#define GREEN 0xff00ff00
+#define WHITE 0xffffffff
+#define ORANGE 0xff007fff
+
 u32*vramaddr(int x, int y) {
 	u32 *vram;
 
@@ -70,7 +77,7 @@ void savepict(const char*file) {
 }
 
 void warn(void) {
-	pspDebugScreenSetTextColor(0xff007fff);
+	color(ORANGE);
 	int i;
 	for (i = 0; i < 51; i++)
 		printf("-");
@@ -80,7 +87,7 @@ void warn(void) {
 	for (i = 0; i < 51; i++)
 		printf("-");
 	printf("\n\n");
-	pspDebugScreenSetTextColor(0xffffffff);
+	color(WHITE);
 }
 
 int main(int argc, char*argv[]) {
@@ -109,6 +116,7 @@ int main(int argc, char*argv[]) {
 	int polestar; prxSysconGetPolestarVersion(&polestar);
 	int fusecfg = prxSysregGetFuseConfig();
 	u64 fuseid = prxSysregGetFuseId();
+	unsigned int scramble = prxNandGetScramble();
 	char kirk[4]; *(int*)kirk = prxSysregGetKirkVersion();
 	char spock[4]; *(int*)spock = prxSysregGetSpockVersion();
 	int tachyon = prxSysregGetTachyonVersion();
@@ -336,23 +344,43 @@ int main(int argc, char*argv[]) {
 		sprintf(model, "%s (%02ig)", model, generation);
 	}
 
-	printf(" * %-10s %x.%x%x (", "Firmware", firmware >> 24,
+	color(ORANGE); printf(" *"); color(WHITE);
+	printf(" %-10s %x.%x%x (", "Firmware", firmware >> 24,
 			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff);
 	printf("0x%08x)\n", firmware);
-	printf(" * %-10s 0x%08x [%08x]\n", "Tachyon", tachyon, bromver);
-	printf(" * %-10s 0x%08x [%s]\n", "Baryon", baryon, times);
-	printf(" * %-10s 0x%08x\n", "Pommel", pommel);
-	printf(" * %-10s 0x%08x\n", "Polestar", polestar);
-	printf(" * %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
+	printf("\n");
+
+	color(RED); printf(" *"); color(WHITE);
+	printf(" %-10s 0x%08x [%08x]\n", "Tachyon", tachyon, bromver);
+	color(RED); printf(" *"); color(WHITE);
+	printf(" %-10s 0x%08x [%s]\n", "Baryon", baryon, times);
+	color(RED); printf(" *"); color(WHITE);
+	printf(" %-10s 0x%08x\n", "Pommel", pommel);
+	color(RED); printf(" *"); color(WHITE);
+	printf(" %-10s 0x%08x\n", "Polestar", polestar);
+	printf("\n");
+
+	color(GREEN); printf(" *"); color(WHITE);
+	printf(" %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
 	if (generation != 5) {
 		printf(" * %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
 	}
-	printf(" * %-10s 0x%llx\n", "FuseId", fuseid);
-	printf(" * %-10s 0x%04x\n", "FuseCfg", fusecfg);
-	printf(" * %-10s %02ig\n\n", "Generation", generation);
+	color(GREEN); printf(" *"); color(WHITE);
+	printf(" %-10s 0x%llx\n", "FuseId", fuseid);
+	color(GREEN); printf(" *"); color(WHITE);
+	printf(" %-10s 0x%04x\n", "FuseCfg", fusecfg);
+	color(GREEN); printf(" *"); color(WHITE);
+	printf(" %-10s 0x%08x\n", "Scramble", scramble);
+	color(GREEN); printf(" *"); color(WHITE);
+	printf(" %-10s %02ig\n", "Generation", generation);
+	printf("\n");
 
-	printf(" * %s\n", model);
-	printf(" * Call me [%s], Gandalf!\n\n", tlotr);
+	color(BLUE); printf(" *"); color(WHITE);
+	printf(" %s\n", model);
+	color(BLUE); printf(" *"); color(WHITE);
+	printf(" Call me ");
+	color(ORANGE); printf(tlotr); color(WHITE);
+	printf(", Gandalf!\n\n");
 
 	if (flag)
 		warn();

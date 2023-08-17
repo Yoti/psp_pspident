@@ -7,6 +7,7 @@ PSP_BEGIN_EXPORTS
 
 	PSP_EXPORT_START(kernel_prx, 0, 0x4001)
 		PSP_EXPORT_FUNC_HASH(prxKernelGetModel)
+		PSP_EXPORT_FUNC_HASH(prxNandGetScramble)
 		PSP_EXPORT_FUNC_HASH(prxSysconGetBaryonVersion)
 		PSP_EXPORT_FUNC_HASH(prxSysconGetPolestarVersion)
 		PSP_EXPORT_FUNC_HASH(prxSysconGetPommelVersion)

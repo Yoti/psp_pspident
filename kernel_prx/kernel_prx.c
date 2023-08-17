@@ -1,5 +1,8 @@
 #include <pspsdk.h>
+#include <pspkernel.h> // sceKernelUtilsSha1Digest()
 #include <pspsyscon.h>
+#include <pspsysreg.h>
+#include <pspidstorage.h>
 #include <pspsysmem_kernel.h> // sceKernelGetModel()
 
 PSP_MODULE_INFO("kernel_prx", 0x1006, 1, 0);
@@ -14,6 +17,22 @@ int prxKernelGetModel(void) {
 	int g = sceKernelGetModel();
 	pspSdkSetK1(k1);
 	return g;
+}
+
+// raing3
+int prxNandGetScramble(void) {
+	int k1 = pspSdkSetK1(0);
+	u32 value;
+	u32 buf[4];
+	u32 sha[5];
+	buf[0] = *(vu32*)(0xBC100090); // volatile?..
+	buf[1] = *(vu32*)(0xBC100094);
+	buf[2] = *(vu32*)(0xBC100090)<<1;
+	buf[3] = 0xD41D8CD9;
+	sceKernelUtilsSha1Digest((u8*)buf, sizeof(buf), (u8*)sha);
+	value = (sha[0] ^ sha[3]) + sha[2];
+	pspSdkSetK1(k1);
+	return value;
 }
 
 int prxSysconGetBaryonVersion(int*baryon) {
@@ -84,7 +103,6 @@ int prxSysregGetSpockVersion(void) {
 	return sv;
 }
 
-int sceSysregGetTachyonVersion(void);
 int prxSysregGetTachyonVersion(void) {
 	int k1 = pspSdkSetK1(0);
 	int tv = sceSysregGetTachyonVersion();
