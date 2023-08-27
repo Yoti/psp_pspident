@@ -16,14 +16,7 @@ PSP_MAIN_THREAD_ATTR(0);
 PSP_HEAP_SIZE_KB(1024);
 
 #include "../kernel_prx/kernel_prx.h"
-#define printf pspDebugScreenPrintf
-
-#define color(x) pspDebugScreenSetTextColor(x)
-#define RED 0xff0000ff
-#define BLUE 0xffff0000
-#define GREEN 0xff00ff00
-#define WHITE 0xffffffff
-#define ORANGE 0xff007fff
+#include "main.h"
 
 u32*vramaddr(int x, int y) {
 	u32 *vram;
@@ -35,18 +28,14 @@ u32*vramaddr(int x, int y) {
 	return vram;
 }
 
-u8 picthead[] = {
-	0x42, 0x4D, 0x36, 0xFA, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x36, 0x00, 0x00, 0x00, 0x28, 0x00,
-	0x00, 0x00, 0xE0, 0x01, 0x00, 0x00, 0x10, 0x01, 0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-
 void savepict(const char*file) {
 	int h, w;
+	struct tagBITMAPFILEHEADER fhead = {0x4d42, 391734, 0, 0, 54};
+	struct tagBITMAPINFOHEADER ihead = {40, 480, 272, 1, 24, 0, 0, 0, 0, 0, 0};
 
 	SceUID fd = sceIoOpen(file, PSP_O_CREAT | PSP_O_TRUNC | PSP_O_RDWR, 0777);
-	sceIoWrite(fd, picthead, sizeof(picthead));
+	sceIoWrite(fd, &fhead, sizeof(fhead));
+	sceIoWrite(fd, &ihead, sizeof(ihead));
 
 	u32*vptr0 = vramaddr(0, 272 - 1);
 
@@ -273,8 +262,8 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00720000:
-			sprintf(tlotr, "Strider");
-			sprintf(model, "%s", "PSP-N1000 TA-091");
+			strcpy(tlotr, "Strider");
+			strcpy(model, "PSP-N1000 TA-091");
 		break;
 
 		case 0x00810000:
@@ -327,14 +316,14 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00900000:
-			sprintf(tlotr, "Bilbo");
-			sprintf(model, "%s", "PSP-E1000 TA-096/TA-097");
+			strcpy(tlotr, "Bilbo");
+			strcpy(model, "PSP-E1000 TA-096/TA-097");
 		break;
 
 		default:
 			flag = 1;
-			sprintf(tlotr, "???");
-			sprintf(model, "%s", "PSP-?000 TA-0??");
+			strcpy(tlotr, "???");
+			strcpy(model, "PSP-?000 TA-0??");
 		break;
 	}
 
@@ -351,19 +340,21 @@ int main(int argc, char*argv[]) {
 	printf("\n");
 
 	color(RED); printf(" *"); color(WHITE);
-	printf(" %-10s 0x%08x [%08x]\n", "Tachyon", tachyon, bromver);
+	printf(" %-10s 0x%08x [ROM:%08x]\n", "Tachyon", tachyon, bromver);
 	color(RED); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%08x [%s]\n", "Baryon", baryon, times);
 	color(RED); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%08x\n", "Pommel", pommel);
 	color(RED); printf(" *"); color(WHITE);
+	//if (polestar && 0x???? != 0x????) {...}
 	printf(" %-10s 0x%08x\n", "Polestar", polestar);
 	printf("\n");
 
 	color(GREEN); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
 	if (generation != 5) {
-		printf(" * %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
+		color(GREEN); printf(" *"); color(WHITE);
+		printf(" %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
 	}
 	color(GREEN); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%llx\n", "FuseId", fuseid);
