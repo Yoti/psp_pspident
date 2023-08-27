@@ -9,7 +9,7 @@
 
 #define VER_MAJOR 1
 #define VER_MINOR 0
-#define VER_BUILD "-beta"
+#define VER_BUILD " \"Aquavit\""
 
 PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);
 PSP_MAIN_THREAD_ATTR(0);
@@ -98,21 +98,22 @@ int main(int argc, char*argv[]) {
 	int flag = 0;
 	int firmware = sceKernelDevkitVersion();
 
-	int generation = prxKernelGetModel() + 1;
 	int baryon; prxSysconGetBaryonVersion(&baryon);
 	int bromver = prxTachyonGetTimeStamp();
-	int pommel; prxSysconGetPommelVersion(&pommel);
 	int polestar; prxSysconGetPolestarVersion(&polestar);
-	int fusecfg = prxSysregGetFuseConfig();
-	u64 fuseid = prxSysregGetFuseId();
-	unsigned int scramble = prxNandGetScramble();
-	char kirk[4]; *(int*)kirk = prxSysregGetKirkVersion();
-	char spock[4]; *(int*)spock = prxSysregGetSpockVersion();
+	int pommel; prxSysconGetPommelVersion(&pommel);
 	int tachyon = prxSysregGetTachyonVersion();
+	char times[64] = "\0"; prxSysconGetTimeStamp(times);
+
+	int fusecfg = prxSysregGetFuseConfig();
+	long long fuseid = prxSysregGetFuseId();
+	int generation = prxKernelGetModel() + 1;
+	char kirk[4]; *(int*)kirk = prxSysregGetKirkVersion();
+	int scramble = prxNandGetScramble();
+	char spock[4]; *(int*)spock = prxSysregGetSpockVersion();
 
 	char model[64] = "\0";
 	char tlotr[64] = "\0";
-	char times[64] = "\0"; prxSysconGetTimeStamp(times);
 
 	switch(tachyon) {
 		case 0x00140000:

@@ -75,10 +75,10 @@ int prxSysregGetFuseConfig(void) {
 	return fc;
 }
 
-u64 sceSysreg_driver_4F46EEDE(void);
-u64 prxSysregGetFuseId(void) {
+long long sceSysreg_driver_4F46EEDE(void);
+long long prxSysregGetFuseId(void) {
 	int k1 = pspSdkSetK1(0);
-	u64 fi = sceSysreg_driver_4F46EEDE();
+	long long fi = sceSysreg_driver_4F46EEDE();
 	pspSdkSetK1(k1);
 	return fi;
 }

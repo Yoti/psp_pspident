@@ -5,6 +5,8 @@ Mostly rewrited from scratch
 
 Open source and under MIT license
 
+![README.png](README.png?raw=true "README.png")
+
 ## Building
 ```
 cd kernel_prx/

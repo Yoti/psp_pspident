@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 cd ident_pbp/
 make clean
 cd ../

@@ -5,7 +5,7 @@ int prxSysconGetPolestarVersion(int*polestar);
 int prxSysconGetPommelVersion(int*pommel);
 int prxSysconGetTimeStamp(char*ts);
 int prxSysregGetFuseConfig(void);
-u64 prxSysregGetFuseId(void);
+long long prxSysregGetFuseId(void);
 int prxSysregGetKirkVersion(void);
 int prxSysregGetSpockVersion(void);
 int prxSysregGetTachyonVersion(void);
