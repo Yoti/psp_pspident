@@ -119,66 +119,66 @@ int main(int argc, char*argv[]) {
 	char tlotr[64] = "\0";
 
 	switch(tachyon) {
-		case 0x00140000:
+		case 0x00140000: // TA-079v1/2/3
 			strcpy(tlotr, "First");
-			sprintf(model, "%s", "PSP-1000 TA-079v");
+			strcpy(model, "PSP-1000 TA-079v");
 
 			switch(baryon) {
 				case 0x00010600:
-					sprintf(model, "%s1", model);
+					strcat(model, "1");
 				break;
 				case 0x00020600:
-					sprintf(model, "%s2", model);
+					strcat(model, "2");
 				break;
 				case 0x00030600:
-					sprintf(model, "%s3", model);
+					strcat(model, "3");
 				break;
 				default:
 					flag = 1;
-					sprintf(model, "%s?", model);
+					strcat(model, "?");
 				break;
 			}
 		break;
 
-		case 0x00200000:
+		case 0x00200000: // TA-079 v4/5
 			strcpy(tlotr, "First");
-			sprintf(model, "%s", "PSP-1000 TA-079v");
+			strcpy(model, "PSP-1000 TA-079v");
 
 			switch(baryon) {
 				case 0x00030600:
-					sprintf(model, "%s4", model);
+					strcat(model, "4");
 				break;
 				case 0x00040600:
-					sprintf(model, "%s5", model);
+					strcat(model, "5");
 				break;
 				default:
 					flag = 1;
-					sprintf(model, "%s?", model);
+					strcat(model, "?");
 				break;
 			}
 		break;
 
-		case 0x00300000:
+		case 0x00300000: // TA-081v1/2
 			strcpy(tlotr, "First");
-			sprintf(model, "%s", "PSP-1000 TA-081v");
+			strcpy(model, "PSP-1000 TA-081v");
 
 			switch(pommel) {
 				case 0x00000103:
-					sprintf(model, "%s1", model);
+					strcat(model, "1");
 				break;
 				case 0x00000104:
-					sprintf(model, "%s2", model);
+					strcat(model, "2");
 				break;
 				default:
 					flag = 1;
-					sprintf(model, "%s?", model);
+					strcat(model, "?");
 				break;
 			}
 		break;
 
-		case 0x00400000:
+		case 0x00400000: // TA-082/6
 			strcpy(tlotr, "Legolas");
-			sprintf(model, "%s", "PSP-1000 TA-08");
+			strcpy(model, "PSP-1000 TA-08");
 
 			switch(baryon) {
 				case 0x00114000:
@@ -197,9 +197,9 @@ int main(int argc, char*argv[]) {
 			}
 		break;
 
-		case 0x00500000:
+		case 0x00500000: // TA-085/8
 			strcpy(tlotr, "Frodo");
-			sprintf(model, "%s", "PSP-2000 TA-0");
+			strcpy(model, "PSP-2000 TA-0");
 
 			switch(baryon) {
 				case 0x0022B200:
@@ -211,7 +211,12 @@ int main(int argc, char*argv[]) {
 				case 0x00243000:
 					switch(pommel) {
 						case 0x00000123:
-							sprintf(model, "%s%s", model, "88v1/v2"); // TODO: proper detection
+							if (shippedfw[0] == '3')
+								sprintf(model, "%s%s", model, "88v1");
+							else if (shippedfw[0] == '4')
+								sprintf(model, "%s%s", model, "88v2");
+							else
+								sprintf(model, "%s%s", model, "88v1/v2");
 						break;
 						case 0x00000132:
 							flag = 1; // TODO: remove after proof
