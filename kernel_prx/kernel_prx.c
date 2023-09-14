@@ -2,14 +2,28 @@
 #include <pspkernel.h> // sceKernelUtilsSha1Digest()
 #include <pspsyscon.h>
 #include <pspsysreg.h>
-#include <pspidstorage.h>
+#include <pspidstorage.h> // sceIdStorageLookup()
 #include <pspsysmem_kernel.h> // sceKernelGetModel()
 
-PSP_MODULE_INFO("kernel_prx", 0x1006, 1, 0);
+PSP_MODULE_INFO("kernel_prx", 0x1006, 1, 1);
 PSP_MAIN_THREAD_ATTR(0);
 
 int module_start(SceSize args, void *argp) {
 	return 0;
+}
+
+int prxIdStorageLookup(u16 key, u32 offset, void*buf, u32 len) {
+	int k1 = pspSdkSetK1(0);
+	int ret = sceIdStorageLookup(key, offset, buf, len);
+	pspSdkSetK1(k1);
+	return ret;
+}
+
+int prxIdStorageReadLeaf(u16 key, void*buf) {
+	int k1 = pspSdkSetK1(0);
+	int ret = sceIdStorageReadLeaf(key, buf);
+	pspSdkSetK1(k1);
+	return ret;
 }
 
 int prxKernelGetModel(void) {

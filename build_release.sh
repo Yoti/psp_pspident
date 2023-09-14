@@ -18,3 +18,5 @@ rm -rf PSP/
 mkdir -p PSP/GAME/pspIdent/
 cp kernel.prx PSP/GAME/pspIdent/
 cp EBOOT.PBP PSP/GAME/pspIdent/
+release="pspIdent_v1.1_"$(date +'%Y%m%d-%H%M%S')".zip"
+zip -r $release PSP

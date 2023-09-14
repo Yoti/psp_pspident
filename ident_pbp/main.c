@@ -8,8 +8,10 @@
 #include <string.h>
 
 #define VER_MAJOR 1
-#define VER_MINOR 0
-#define VER_BUILD " \"Aquavit\""
+#define VER_MINOR 1 // 5
+#define VER_BUILD "-beta"
+//#define VER_BUILD " \"Bourbon\""
+//#define VER_BUILD " \"Campari\""
 
 PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);
 PSP_MAIN_THREAD_ATTR(0);
@@ -45,16 +47,15 @@ void savepict(const char*file) {
 		int bufidx = 0;
 
 		for (w = 0; w < 480; w++) {
-			u32 p = *vptr;
-
-			u8 r = (p & 0x000000FFL);
-			u8 g = (p & 0x0000FF00L) >> 8;
-			u8 b = (p & 0x00FF0000L) >> 16;
+			u8 r = (*vptr & 0x000000FFL);
+			u8 g = (*vptr & 0x0000FF00L) >> 8;
+			u8 b = (*vptr & 0x00FF0000L) >> 16;
 
 			buffer[bufidx] = b; bufidx++;
 			buffer[bufidx] = g; bufidx++;
 			buffer[bufidx] = r; bufidx++;
 
+			*vptr = *vptr ^ 0x00FFFFFF;
 			vptr++;
 		}
 
@@ -97,6 +98,8 @@ int main(int argc, char*argv[]) {
 
 	int flag = 0;
 	int firmware = sceKernelDevkitVersion();
+	char shippedfw[4]; memset(shippedfw, 0, strlen(shippedfw));
+		prxIdStorageLookup(0x51, 0, shippedfw, 4);
 
 	int baryon; prxSysconGetBaryonVersion(&baryon);
 	int bromver = prxTachyonGetTimeStamp();
@@ -117,7 +120,7 @@ int main(int argc, char*argv[]) {
 
 	switch(tachyon) {
 		case 0x00140000:
-			sprintf(tlotr, "First");
+			strcpy(tlotr, "First");
 			sprintf(model, "%s", "PSP-1000 TA-079v");
 
 			switch(baryon) {
@@ -138,7 +141,7 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00200000:
-			sprintf(tlotr, "First");
+			strcpy(tlotr, "First");
 			sprintf(model, "%s", "PSP-1000 TA-079v");
 
 			switch(baryon) {
@@ -156,7 +159,7 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00300000:
-			sprintf(tlotr, "First");
+			strcpy(tlotr, "First");
 			sprintf(model, "%s", "PSP-1000 TA-081v");
 
 			switch(pommel) {
@@ -174,7 +177,7 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00400000:
-			sprintf(tlotr, "Legolas");
+			strcpy(tlotr, "Legolas");
 			sprintf(model, "%s", "PSP-1000 TA-08");
 
 			switch(baryon) {
@@ -195,7 +198,7 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00500000:
-			sprintf(tlotr, "Frodo");
+			strcpy(tlotr, "Frodo");
 			sprintf(model, "%s", "PSP-2000 TA-0");
 
 			switch(baryon) {
@@ -231,11 +234,11 @@ int main(int argc, char*argv[]) {
 			sprintf(model, "%s", "PSP-");
 			switch(baryon) {
 				case 0x00243000:
-					sprintf(tlotr, "Frodo");
+					strcpy(tlotr, "Frodo");
 					sprintf(model, "%s%s", model, "2000 TA-088v3");
 				break;
 				case 0x00263100:
-					sprintf(tlotr, "Samwise");
+					strcpy(tlotr, "Samwise");
 					sprintf(model, "%s%s", model, "3000 TA-090v");
 					switch(pommel) {
 						case 0x00000132:
@@ -251,12 +254,12 @@ int main(int argc, char*argv[]) {
 					}
 				break;
 				case 0x00285000:
-					sprintf(tlotr, "Samwise");
+					strcpy(tlotr, "Samwise");
 					sprintf(model, "%s%s", model, "3000 TA-092");
 				break;
 				default:
 					flag = 1;
-					sprintf(tlotr, "???");
+					strcpy(tlotr, "???");
 					sprintf(model, "%s%s", model, "?000 TA-0??");
 				break;
 			}
@@ -268,8 +271,8 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00810000:
-			sprintf(tlotr, "Samwise VA2");
-			sprintf(model, "%s", "PSP-3000 TA-09");
+			strcpy(tlotr, "Samwise VA2");
+			strcpy(model, "PSP-3000 TA-09");
 			switch(baryon) {
 				case 0x002C4000:
 					sprintf(model, "%s%s", model, "3v"); // TA-093v
@@ -300,8 +303,8 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00820000:
-			sprintf(tlotr, "Samwise VA2");
-			sprintf(model, "%s", "PSP-3000 TA-095v");
+			strcpy(tlotr, "Samwise VA2");
+			strcpy(model, "PSP-3000 TA-095v");
 			switch(baryon) {
 				case 0x002E4000:
 					sprintf(model, "%s%s/v2a", model, "2"); // TA-095v2
@@ -337,8 +340,10 @@ int main(int argc, char*argv[]) {
 	color(ORANGE); printf(" *"); color(WHITE);
 	printf(" %-10s %x.%x%x (", "Firmware", firmware >> 24,
 			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff);
-	printf("0x%08x)\n", firmware);
-	printf("\n");
+	printf("0x%08x)", firmware);
+	if (shippedfw[0] != 0)
+		printf(" [%s]", shippedfw);
+	printf("\n\n");
 
 	color(RED); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%08x [ROM:%08x]\n", "Tachyon", tachyon, bromver);
