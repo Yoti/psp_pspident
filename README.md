@@ -12,7 +12,7 @@ Open source and under MIT license
 cd kernel_prx/
 make
 psp-build-exports -s kernel_exp.exp
-cd ..
+cd ../
 cd ident_pbp/
 make
 ```

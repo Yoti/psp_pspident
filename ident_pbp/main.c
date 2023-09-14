@@ -64,6 +64,7 @@ void savepict(const char*file) {
 	}
 
 	sceIoClose(fd);
+	//sceGeDrawSync(0);
 }
 
 void warn(void) {
@@ -98,7 +99,7 @@ int main(int argc, char*argv[]) {
 
 	int flag = 0;
 	int firmware = sceKernelDevkitVersion();
-	char shippedfw[4]; memset(shippedfw, 0, strlen(shippedfw));
+	char shippedfw[5]; memset(shippedfw, 0, strlen(shippedfw));
 		prxIdStorageLookup(0x51, 0, shippedfw, 4);
 
 	int baryon; prxSysconGetBaryonVersion(&baryon);
@@ -116,12 +117,15 @@ int main(int argc, char*argv[]) {
 	char spock[4]; *(int*)spock = prxSysregGetSpockVersion();
 
 	char model[64] = "\0";
+	char region[2]; memset(region, 0, strlen(region));
+		prxIdStorageLookup(0x0100, 0x3D, &region, 1);
 	char tlotr[64] = "\0";
 
 	switch(tachyon) {
 		case 0x00140000: // TA-079v1/2/3
 			strcpy(tlotr, "First");
-			strcpy(model, "PSP-1000 TA-079v");
+			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
+			strcat(model, " TA-079v");
 
 			switch(baryon) {
 				case 0x00010600:
@@ -142,7 +146,8 @@ int main(int argc, char*argv[]) {
 
 		case 0x00200000: // TA-079 v4/5
 			strcpy(tlotr, "First");
-			strcpy(model, "PSP-1000 TA-079v");
+			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
+			strcat(model, " TA-079v");
 
 			switch(baryon) {
 				case 0x00030600:
@@ -160,7 +165,8 @@ int main(int argc, char*argv[]) {
 
 		case 0x00300000: // TA-081v1/2
 			strcpy(tlotr, "First");
-			strcpy(model, "PSP-1000 TA-081v");
+			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
+			strcat(model, " TA-081v");
 
 			switch(pommel) {
 				case 0x00000103:
@@ -178,7 +184,8 @@ int main(int argc, char*argv[]) {
 
 		case 0x00400000: // TA-082/6
 			strcpy(tlotr, "Legolas");
-			strcpy(model, "PSP-1000 TA-08");
+			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
+			strcat(model, " TA-08");
 
 			switch(baryon) {
 				case 0x00114000:
@@ -199,7 +206,8 @@ int main(int argc, char*argv[]) {
 
 		case 0x00500000: // TA-085/8
 			strcpy(tlotr, "Frodo");
-			strcpy(model, "PSP-2000 TA-0");
+			sprintf(model, "PSP-20%02i", ModelRegion[(int)region[0]]);
+			strcat(model, " TA-0");
 
 			switch(baryon) {
 				case 0x0022B200:
@@ -211,12 +219,13 @@ int main(int argc, char*argv[]) {
 				case 0x00243000:
 					switch(pommel) {
 						case 0x00000123:
+							/*
 							if (shippedfw[0] == '3')
 								sprintf(model, "%s%s", model, "88v1");
-							else if (shippedfw[0] == '4')
+							else*/ if (shippedfw[0] == '4')
 								sprintf(model, "%s%s", model, "88v2");
 							else
-								sprintf(model, "%s%s", model, "88v1/v2");
+								sprintf(model, "%s%s", model, "88v1/v2"); // TODO: proper detection
 						break;
 						case 0x00000132:
 							flag = 1; // TODO: remove after proof
@@ -240,11 +249,13 @@ int main(int argc, char*argv[]) {
 			switch(baryon) {
 				case 0x00243000:
 					strcpy(tlotr, "Frodo");
-					sprintf(model, "%s%s", model, "2000 TA-088v3");
+					sprintf(model, "PSP-20%02i", ModelRegion[(int)region[0]]);
+					strcat(model, " TA-088v3");
 				break;
 				case 0x00263100:
 					strcpy(tlotr, "Samwise");
-					sprintf(model, "%s%s", model, "3000 TA-090v");
+					sprintf(model, "PSP-30%02i", ModelRegion[(int)region[0]]);
+					strcat(model, " TA-090v");
 					switch(pommel) {
 						case 0x00000132:
 							sprintf(model, "%s%s", model, "2");
@@ -260,7 +271,8 @@ int main(int argc, char*argv[]) {
 				break;
 				case 0x00285000:
 					strcpy(tlotr, "Samwise");
-					sprintf(model, "%s%s", model, "3000 TA-092");
+					sprintf(model, "PSP-30%02i", ModelRegion[(int)region[0]]);
+					strcat(model, " TA-092");
 				break;
 				default:
 					flag = 1;
@@ -272,12 +284,14 @@ int main(int argc, char*argv[]) {
 
 		case 0x00720000:
 			strcpy(tlotr, "Strider");
-			strcpy(model, "PSP-N1000 TA-091");
+			sprintf(model, "PSP-N10%02i", ModelRegion[(int)region[0]]);
+			strcat(model, " TA-091");
 		break;
 
 		case 0x00810000:
 			strcpy(tlotr, "Samwise VA2");
-			strcpy(model, "PSP-3000 TA-09");
+			sprintf(model, "PSP-30%02i", ModelRegion[(int)region[0]]);
+			strcat(model, " TA-09");
 			switch(baryon) {
 				case 0x002C4000:
 					sprintf(model, "%s%s", model, "3v"); // TA-093v
@@ -309,7 +323,8 @@ int main(int argc, char*argv[]) {
 
 		case 0x00820000:
 			strcpy(tlotr, "Samwise VA2");
-			strcpy(model, "PSP-3000 TA-095v");
+			sprintf(model, "PSP-30%02i", ModelRegion[(int)region[0]]);
+			strcat(model, " TA-095v");
 			switch(baryon) {
 				case 0x002E4000:
 					sprintf(model, "%s%s/v2a", model, "2"); // TA-095v2
@@ -326,7 +341,11 @@ int main(int argc, char*argv[]) {
 
 		case 0x00900000:
 			strcpy(tlotr, "Bilbo");
-			strcpy(model, "PSP-E1000 TA-096/TA-097");
+			sprintf(model, "PSP-E10%02i", ModelRegion[(int)region[0]]);
+			if (shippedfw[2] == '5')
+				strcat(model, " TA-096");
+			else
+				strcat(model, " TA-096/TA-097"); // TODO: proper detection
 		break;
 
 		default:

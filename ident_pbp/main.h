@@ -7,6 +7,8 @@
 #define WHITE 0xffffffff
 #define ORANGE 0xff007fff
 
+int ModelRegion[16] = {0, 0, 0, 0, 1, 4, 5, 3, 10, 2, 6, 7, 8, 9, 0, 0};
+
 typedef struct __attribute__((packed)) tagBITMAPFILEHEADER {
 	short	bfType;
 	int		bfSize;
@@ -27,3 +29,4 @@ typedef struct __attribute__((packed)) tagBITMAPINFOHEADER {
 	int		biClrUsed;
 	int		biClrImportant;
 } BITMAPINFOHEADER;
+

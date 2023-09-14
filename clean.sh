@@ -5,3 +5,6 @@ cd ../
 cd kernel_prx/
 make clean
 cd ../
+rm -rf PSP/
+rm EBOOT.PBP
+rm kernel.prx
