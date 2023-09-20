@@ -125,9 +125,11 @@ int prxSysregGetTachyonVersion(void) {
 }
 
 // Draan
-int prxTachyonGetTimeStamp(void) {
-	int ts;
+unsigned int prxTachyonGetTimeStamp(void) {
+	unsigned int ts;
 	asm volatile("cfc0 %0, $17" : "=r" (ts));
+	if (ts >> 24 == 0xa0)
+		ts -= 0x80000000;
 	return ts;
 }
 

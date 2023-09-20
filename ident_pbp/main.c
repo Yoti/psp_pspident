@@ -32,6 +32,7 @@ u32*vramaddr(int x, int y) {
 
 void savepict(const char*file) {
 	int h, w;
+	u32*vptr; u32*vptr0;
 	struct tagBITMAPFILEHEADER fhead = {0x4d42, 391734, 0, 0, 54};
 	struct tagBITMAPINFOHEADER ihead = {40, 480, 272, 1, 24, 0, 0, 0, 0, 0, 0};
 
@@ -39,10 +40,9 @@ void savepict(const char*file) {
 	sceIoWrite(fd, &fhead, sizeof(fhead));
 	sceIoWrite(fd, &ihead, sizeof(ihead));
 
-	u32*vptr0 = vramaddr(0, 272 - 1);
-
+	vptr0 = vramaddr(0, 272 - 1);
 	for (h = 0; h < 272; h++) {
-		u32*vptr = vptr0;
+		vptr = vptr0;
 		u8 buffer[512 * 3];
 		int bufidx = 0;
 
@@ -64,7 +64,16 @@ void savepict(const char*file) {
 	}
 
 	sceIoClose(fd);
-	//sceGeDrawSync(0);
+
+	vptr0 = vramaddr(0, 272 - 1);
+	for (h = 0; h < 272; h++) {
+		vptr = vptr0;
+		for (w = 0; w < 480; w++) {
+			*vptr = *vptr ^ 0x00FFFFFF;
+			vptr++;
+		}
+		vptr0 -= 512;
+	}
 }
 
 void warn(void) {
@@ -103,7 +112,7 @@ int main(int argc, char*argv[]) {
 		prxIdStorageLookup(0x51, 0, shippedfw, 4);
 
 	int baryon; prxSysconGetBaryonVersion(&baryon);
-	int bromver = prxTachyonGetTimeStamp();
+	unsigned int bromver = prxTachyonGetTimeStamp();
 	int polestar; prxSysconGetPolestarVersion(&polestar);
 	int pommel; prxSysconGetPommelVersion(&pommel);
 	int tachyon = prxSysregGetTachyonVersion();
@@ -137,6 +146,20 @@ int main(int argc, char*argv[]) {
 				case 0x00030600:
 					strcat(model, "3");
 				break;
+
+				case 0x00010601:
+					flag = 1;
+					sprintf(model, "DEM-1000(?) TMU-001(?) [%02x]", (int)region[0]);
+				break;
+				case 0x00020601:
+					flag = 1;
+					sprintf(model, "DTP-T1000 TMU-001 [%02x]", (int)region[0]);
+				break;
+				case 0x00030601:
+					flag = 1;
+					sprintf(model, "DTP-H1500/DTP-L1500 TMU-002 [%02x]", (int)region[0]);
+				break;
+
 				default:
 					flag = 1;
 					strcat(model, "?");
@@ -447,8 +470,8 @@ int main(int argc, char*argv[]) {
 			}
 
 			printf(" Screenshot was saved to %s!\n", file);
-			printf(" The program will automatically quit after 4 seconds\n");
-			sceKernelDelayThread(4*1000*1000);
+			printf(" The program will automatically quit after 8 seconds\n");
+			sceKernelDelayThread(8*1000*1000);
 			break;
 		} else if (pad.Buttons & PSP_CTRL_CIRCLE) {
 			break;

@@ -6,7 +6,7 @@ CFLAGS = -O2 -G0 -Wall -Wno-restrict
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS) -c
 
-PSP_FW_VERSION = 371
+PSP_FW_VERSION = 300
 
 BUILD_PRX = 1
 EXTRA_TARGETS = EBOOT.PBP

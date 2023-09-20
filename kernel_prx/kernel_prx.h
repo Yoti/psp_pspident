@@ -11,4 +11,4 @@ long long prxSysregGetFuseId(void);
 int prxSysregGetKirkVersion(void);
 int prxSysregGetSpockVersion(void);
 int prxSysregGetTachyonVersion(void);
-int prxTachyonGetTimeStamp(void);
+unsigned int prxTachyonGetTimeStamp(void);
