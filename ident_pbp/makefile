@@ -2,7 +2,7 @@ TARGET = eboot
 OBJS = main.o ../kernel_prx/kernel_prx.S
 
 INCDIR = 
-CFLAGS = -O2 -G0 -Wall -Wno-restrict
+CFLAGS = -O2 -G0 -Wall
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS) -c
 

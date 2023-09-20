@@ -55,7 +55,7 @@ void savepict(const char*file) {
 			buffer[bufidx] = g; bufidx++;
 			buffer[bufidx] = r; bufidx++;
 
-			*vptr = *vptr ^ 0x00FFFFFF;
+			*vptr = *vptr ^ 0x00FFFFFF; // invert colors
 			vptr++;
 		}
 
@@ -65,6 +65,7 @@ void savepict(const char*file) {
 
 	sceIoClose(fd);
 
+	// revert back colors
 	vptr0 = vramaddr(0, 272 - 1);
 	for (h = 0; h < 272; h++) {
 		vptr = vptr0;
@@ -212,17 +213,17 @@ int main(int argc, char*argv[]) {
 
 			switch(baryon) {
 				case 0x00114000:
-					sprintf(tlotr, "%s1", tlotr); // Legolas1
-					sprintf(model, "%s2", model); // TA-082
+					strcat(tlotr, "1"); // Legolas1
+					strcat(model, "2"); // TA-082
 				break;
 				case 0x00121000:
-					sprintf(tlotr, "%s2", tlotr); // Legolas2
-					sprintf(model, "%s6", model); // TA-086
+					strcat(tlotr, "2"); // Legolas2
+					strcat(model, "6"); // TA-086
 				break;
 				default:
 					flag = 1;
-					sprintf(tlotr, "%s?", tlotr); // Legolas?
-					sprintf(model, "%s?", model); // TA-08?
+					strcat(tlotr, "?"); // Legolas?
+					strcat(model, "?"); // TA-08?
 				break;
 			}
 		break;
@@ -234,141 +235,136 @@ int main(int argc, char*argv[]) {
 
 			switch(baryon) {
 				case 0x0022B200:
-					sprintf(model, "%s%s", model, "85v1");
+					strcat(model, "85v1");
 				break;
 				case 0x00234000:
-					sprintf(model, "%s%s", model, "85v2");
+					strcat(model, "85v2");
 				break;
 				case 0x00243000:
 					switch(pommel) {
 						case 0x00000123:
-							/*
-							if (shippedfw[0] == '3')
-								sprintf(model, "%s%s", model, "88v1");
-							else*/ if (shippedfw[0] == '4')
-								sprintf(model, "%s%s", model, "88v2");
+							/*if (shippedfw[0] == '3')
+								strcat(model, "88v1");
+							else*/if (shippedfw[0] == '4')
+								strcat(model, "88v2");
 							else
-								sprintf(model, "%s%s", model, "88v1/v2"); // TODO: proper detection
+								strcat(model, "88v1/v2"); // TODO: proper detection
 						break;
 						case 0x00000132:
 							flag = 1; // TODO: remove after proof
-							sprintf(model, "%s%s", model, "90v1");
+							strcat(model, "90v1");
 						break;
 						default:
 							flag = 1;
-							sprintf(model, "%s%s", model, "??"); // TA-0??
+							strcat(model, "??"); // TA-0??
 						break;
 					}
 				break;
 				default:
 					flag = 1;
-					sprintf(model, "%s%s", model, "??"); // TA-0??
+					strcat(model, "??"); // TA-0??
 				break;
 			}
 		break;
 
 		case 0x00600000:
-			sprintf(model, "%s", "PSP-");
 			switch(baryon) {
 				case 0x00243000:
 					strcpy(tlotr, "Frodo");
-					sprintf(model, "PSP-20%02i", ModelRegion[(int)region[0]]);
-					strcat(model, " TA-088v3");
+					sprintf(model, "PSP-20%02i TA-088v3", ModelRegion[(int)region[0]]);
 				break;
 				case 0x00263100:
 					strcpy(tlotr, "Samwise");
-					sprintf(model, "PSP-30%02i", ModelRegion[(int)region[0]]);
-					strcat(model, " TA-090v");
+					sprintf(model, "PSP-30%02i TA-090v", ModelRegion[(int)region[0]]);
 					switch(pommel) {
 						case 0x00000132:
-							sprintf(model, "%s%s", model, "2");
+							strcat(model, "2"); // TA-090v2
 						break;
 						case 0x00000133:
-							sprintf(model, "%s%s", model, "3");
+							strcat(model, "3"); // TA-090v3
 						break;
 						default:
 							flag = 1;
-							sprintf(model, "%s%s", model, "?"); // TA-090v?
+							strcat(model, "?"); // TA-090v?
 						break;
 					}
 				break;
 				case 0x00285000:
 					strcpy(tlotr, "Samwise");
-					sprintf(model, "PSP-30%02i", ModelRegion[(int)region[0]]);
-					strcat(model, " TA-092");
+					sprintf(model, "PSP-30%02i TA-092", ModelRegion[(int)region[0]]);
 				break;
 				default:
 					flag = 1;
 					strcpy(tlotr, "???");
-					sprintf(model, "%s%s", model, "?000 TA-0??");
+					strcpy(model, "PSP-?000 TA-0??");
 				break;
 			}
 		break;
 
 		case 0x00720000:
 			strcpy(tlotr, "Strider");
-			sprintf(model, "PSP-N10%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-091");
+			sprintf(model, "PSP-N10%02i TA-091", ModelRegion[(int)region[0]]);
 		break;
 
 		case 0x00810000:
 			strcpy(tlotr, "Samwise VA2");
-			sprintf(model, "PSP-30%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-09");
+			sprintf(model, "PSP-30%02i TA-09", ModelRegion[(int)region[0]]);
 			switch(baryon) {
 				case 0x002C4000:
-					sprintf(model, "%s%s", model, "3v"); // TA-093v
+					strcat(model, "3v"); // TA-093v
 					switch(pommel) {
 						case 0x00000141:
-							sprintf(model, "%s%s", model, "1"); // TA-093v1
+							strcat(model, "1"); // TA-093v1
 						break;
 						case 0x00000143:
-							sprintf(model, "%s%s", model, "2"); // TA-093v2
+							strcat(model, "2"); // TA-093v2
 						break;
 						default:
 							flag = 1;
-							sprintf(model, "%s%s", model, "?"); // TA-093v?
+							strcat(model, "?"); // TA-093v?
 						break;
 					}
 				break;
 				case 0x002E4000:
-					sprintf(model, "%s%s/v1a", model, "5v1"); // TA-095v1
+					strcat(model, "5v1"); // TA-095v1 [09g]
 				break;
 				case 0x012E4000:
-					sprintf(model, "%s%s/v1b", model, "5v3"); // TA-095v3 [07g]
+					strcat(model, "5v3"); // TA-095v3 [07g]
 				break;
 				default:
 					flag = 1;
-					sprintf(model, "%s%s", model, "?"); // TA-09?
+					strcat(model, "?"); // TA-09?
 				break;
 			}
 		break;
 
 		case 0x00820000:
 			strcpy(tlotr, "Samwise VA2");
-			sprintf(model, "PSP-30%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-095v");
+			sprintf(model, "PSP-30%02i TA-095v", ModelRegion[(int)region[0]]);
 			switch(baryon) {
 				case 0x002E4000:
-					sprintf(model, "%s%s/v2a", model, "2"); // TA-095v2
+					strcat(model, "2"); // TA-095v2 [09g]
 				break;
 				case 0x012E4000:
-					sprintf(model, "%s%s/v2b", model, "4"); // TA-095v4 [07g]
+					strcat(model, "4"); // TA-095v4 [07g]
 				break;
 				default:
 					flag = 1;
-					sprintf(model, "%s%s", model, "?"); // TA-095v?
+					strcat(model, "?"); // TA-095v?
 				break;
 			}
 		break;
 
 		case 0x00900000:
 			strcpy(tlotr, "Bilbo");
-			sprintf(model, "PSP-E10%02i", ModelRegion[(int)region[0]]);
+			sprintf(model, "PSP-E10%02i TA-096", ModelRegion[(int)region[0]]);
+			if (shippedfw[2] != '5')
+				strcat(model, "/TA-097");
+			/*sprintf(model, "PSP-E10%02i", ModelRegion[(int)region[0]]);
 			if (shippedfw[2] == '5')
 				strcat(model, " TA-096");
 			else
-				strcat(model, " TA-096/TA-097"); // TODO: proper detection
+				strcat(model, " TA-096/TA-097"); // TODO: proper detection*/
 		break;
 
 		default:
@@ -379,9 +375,11 @@ int main(int argc, char*argv[]) {
 	}
 
 	if ((generation == 4) && (baryon == 0x002E4000)) {
-		sprintf(model, "%s (fake 04g/real 09g)", model);
+		strcat(model, " (fake 04g/real 09g)");
 	} else {
-		sprintf(model, "%s (%02ig)", model, generation);
+		char real_gen[16] = "\0";
+		sprintf(real_gen, " (%02ig)", generation);
+		strcat(model, real_gen);
 	}
 
 	color(ORANGE); printf(" *"); color(WHITE);
@@ -399,8 +397,7 @@ int main(int argc, char*argv[]) {
 	color(RED); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%08x\n", "Pommel", pommel);
 	color(RED); printf(" *"); color(WHITE);
-	//if (polestar && 0x???? != 0x????) {...}
-	printf(" %-10s 0x%08x\n", "Polestar", polestar);
+	printf(" %-10s 0x%08x\n", "Polestar", polestar); // 01g Polestars are 0x8xxx
 	printf("\n");
 
 	color(GREEN); printf(" *"); color(WHITE);
