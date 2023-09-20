@@ -1,5 +1,5 @@
 TARGET = eboot
-OBJS = main.o ../kernel_prx/kernel_prx.S
+OBJS = main.o ../kernel_prx/kernel_prx.S ../lodepng/lodepng.o
 
 INCDIR = 
 CFLAGS = -O2 -G0 -Wall

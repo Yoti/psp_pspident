@@ -5,7 +5,9 @@
 #include <pspge.h>
 #include <psprtc.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "../lodepng/lodepng.h"
 
 #define VER_MAJOR 1
 #define VER_MINOR 1 // 5
@@ -30,40 +32,61 @@ u32*vramaddr(int x, int y) {
 	return vram;
 }
 
+// https://lodev.org/lodepng/
+void encodeTwoSteps(const char*filename, const unsigned char*image, unsigned width, unsigned height) {
+	unsigned char*png;
+	size_t pngsize;
+
+	unsigned error = lodepng_encode32(&png, &pngsize, image, width, height);
+	if(!error) lodepng_save_file(png, pngsize, filename);
+
+	if(error) printf("error %u: %s\n", error, lodepng_error_text(error));
+
+	free(png);
+}
+
 void savepict(const char*file) {
 	int h, w;
 	u32*vptr; u32*vptr0;
-	struct tagBITMAPFILEHEADER fhead = {0x4d42, 391734, 0, 0, 54};
-	struct tagBITMAPINFOHEADER ihead = {40, 480, 272, 1, 24, 0, 0, 0, 0, 0, 0};
+	unsigned char*image = malloc(480 * 272 * 4);
+	/*struct tagBITMAPFILEHEADER fhead = {0x4d42, 391734, 0, 0, 54};
+	struct tagBITMAPINFOHEADER ihead = {40, 480, 272, 1, 24, 0, 0, 0, 0, 0, 0};*/
 
-	SceUID fd = sceIoOpen(file, PSP_O_CREAT | PSP_O_TRUNC | PSP_O_RDWR, 0777);
+	/*SceUID fd = sceIoOpen(file, PSP_O_CREAT | PSP_O_TRUNC | PSP_O_RDWR, 0777);
 	sceIoWrite(fd, &fhead, sizeof(fhead));
-	sceIoWrite(fd, &ihead, sizeof(ihead));
+	sceIoWrite(fd, &ihead, sizeof(ihead));*/
 
 	vptr0 = vramaddr(0, 272 - 1);
 	for (h = 0; h < 272; h++) {
 		vptr = vptr0;
-		u8 buffer[512 * 3];
-		int bufidx = 0;
+		/*u8 buffer[512 * 3];
+		int bufidx = 0;*/
 
 		for (w = 0; w < 480; w++) {
 			u8 r = (*vptr & 0x000000FFL);
 			u8 g = (*vptr & 0x0000FF00L) >> 8;
 			u8 b = (*vptr & 0x00FF0000L) >> 16;
 
-			buffer[bufidx] = b; bufidx++;
+			/*buffer[bufidx] = b; bufidx++;
 			buffer[bufidx] = g; bufidx++;
-			buffer[bufidx] = r; bufidx++;
+			buffer[bufidx] = r; bufidx++;*/
+
+			image[4 * 480 * h + 4 * w + 0] = r;
+			image[4 * 480 * h + 4 * w + 1] = g;
+			image[4 * 480 * h + 4 * w + 2] = b;
+			image[4 * 480 * h + 4 * w + 3] = 0xFF;
 
 			*vptr = *vptr ^ 0x00FFFFFF; // invert colors
 			vptr++;
 		}
 
-		sceIoWrite(fd, buffer, 480 * 3);
+		//sceIoWrite(fd, buffer, 480 * 3);
 		vptr0 -= 512;
 	}
 
-	sceIoClose(fd);
+	//sceIoClose(fd);
+	encodeTwoSteps(file, image, 480, 272);
+	free(image);
 
 	// revert back colors
 	vptr0 = vramaddr(0, 272 - 1);
@@ -453,7 +476,7 @@ int main(int argc, char*argv[]) {
 			char file[128] = "\0";
 			for(;;) {
 				sceRtcGetCurrentClockLocalTime(&time);
-				sprintf(file, "%s/%04d%02d%02d_%02d%02d%02d.bmp", dir,
+				sprintf(file, "%s/%04d%02d%02d_%02d%02d%02d.png", dir,
 						time.year, time.month, time.day,
 						time.hour, time.minutes, time.seconds);
 				fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
@@ -467,7 +490,7 @@ int main(int argc, char*argv[]) {
 			}
 
 			printf(" Screenshot was saved to %s!\n", file);
-			printf(" The program will automatically quit after 8 seconds\n");
+			printf(" The program will automatically quit after 8 seconds...\n");
 			sceKernelDelayThread(8*1000*1000);
 			break;
 		} else if (pad.Buttons & PSP_CTRL_CIRCLE) {

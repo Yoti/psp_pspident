@@ -8,7 +8,7 @@
 PSP_MODULE_INFO("kernel_prx", 0x1006, 1, 1);
 PSP_MAIN_THREAD_ATTR(0);
 
-int module_start(SceSize args, void *argp) {
+int module_start(SceSize args, void*argp) {
 	return 0;
 }
 
