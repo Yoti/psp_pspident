@@ -7,12 +7,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../lodepng/lodepng.h"
+#include "../lodepng_c18b949/lodepng.h"
 
 #define VER_MAJOR 1
-#define VER_MINOR 1 // 5
-#define VER_BUILD "-beta"
-//#define VER_BUILD " \"Bourbon\""
+#define VER_MINOR 5
+#define VER_BUILD " \"Bourbon\""
 //#define VER_BUILD " \"Campari\""
 
 PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);
@@ -32,15 +31,16 @@ u32*vramaddr(int x, int y) {
 	return vram;
 }
 
-// https://lodev.org/lodepng/
-void encodeTwoSteps(const char*filename, const unsigned char*image, unsigned width, unsigned height) {
+// https://lodev.org/lodepng/ https://github.com/lvandeve/lodepng/
+void encodeTwoSteps(const char*filename, const unsigned char*image, unsigned int width, unsigned int height) {
 	unsigned char*png;
 	size_t pngsize;
 
-	unsigned error = lodepng_encode32(&png, &pngsize, image, width, height);
-	if(!error) lodepng_save_file(png, pngsize, filename);
-
-	if(error) printf("error %u: %s\n", error, lodepng_error_text(error));
+	unsigned int error = lodepng_encode32(&png, &pngsize, image, width, height);
+	if (error)
+		printf("lodepng_encode32() error %u: %s\n", error, lodepng_error_text(error));
+	else
+		lodepng_save_file(png, pngsize, filename);
 
 	free(png);
 }
@@ -49,42 +49,28 @@ void savepict(const char*file) {
 	int h, w;
 	u32*vptr; u32*vptr0;
 	unsigned char*image = malloc(480 * 272 * 4);
-	/*struct tagBITMAPFILEHEADER fhead = {0x4d42, 391734, 0, 0, 54};
-	struct tagBITMAPINFOHEADER ihead = {40, 480, 272, 1, 24, 0, 0, 0, 0, 0, 0};*/
-
-	/*SceUID fd = sceIoOpen(file, PSP_O_CREAT | PSP_O_TRUNC | PSP_O_RDWR, 0777);
-	sceIoWrite(fd, &fhead, sizeof(fhead));
-	sceIoWrite(fd, &ihead, sizeof(ihead));*/
 
 	vptr0 = vramaddr(0, 272 - 1);
-	for (h = 0; h < 272; h++) {
+	for (h = 272; h > 0; h--) {
 		vptr = vptr0;
-		/*u8 buffer[512 * 3];
-		int bufidx = 0;*/
 
-		for (w = 0; w < 480; w++) {
+		for (w = 480; w > 0; w--) {
 			u8 r = (*vptr & 0x000000FFL);
 			u8 g = (*vptr & 0x0000FF00L) >> 8;
 			u8 b = (*vptr & 0x00FF0000L) >> 16;
 
-			/*buffer[bufidx] = b; bufidx++;
-			buffer[bufidx] = g; bufidx++;
-			buffer[bufidx] = r; bufidx++;*/
-
-			image[4 * 480 * h + 4 * w + 0] = r;
-			image[4 * 480 * h + 4 * w + 1] = g;
-			image[4 * 480 * h + 4 * w + 2] = b;
-			image[4 * 480 * h + 4 * w + 3] = 0xFF;
+			image[4 * 480 * h - 4 * w + 0] = r;
+			image[4 * 480 * h - 4 * w + 1] = g;
+			image[4 * 480 * h - 4 * w + 2] = b;
+			image[4 * 480 * h - 4 * w + 3] = 0xFF;
 
 			*vptr = *vptr ^ 0x00FFFFFF; // invert colors
 			vptr++;
 		}
 
-		//sceIoWrite(fd, buffer, 480 * 3);
 		vptr0 -= 512;
 	}
 
-	//sceIoClose(fd);
 	encodeTwoSteps(file, image, 480, 272);
 	free(image);
 
@@ -150,8 +136,10 @@ int main(int argc, char*argv[]) {
 	char spock[4]; *(int*)spock = prxSysregGetSpockVersion();
 
 	char model[64] = "\0";
+	char c2dreg[2]; memset(c2dreg, 0, strlen(c2dreg));
+		prxIdStorageLookup(0x0100, 0x3D, &c2dreg, 1);
 	char region[2]; memset(region, 0, strlen(region));
-		prxIdStorageLookup(0x0100, 0x3D, &region, 1);
+		prxIdStorageLookup(0x0100, 0xF5, &region, 1);
 	char tlotr[64] = "\0";
 
 	switch(tachyon) {
@@ -173,15 +161,23 @@ int main(int argc, char*argv[]) {
 
 				case 0x00010601:
 					flag = 1;
-					sprintf(model, "DEM-1000(?) TMU-001(?) [%02x]", (int)region[0]);
+					strcat(tlotr, " (Proto Tool)");
+					strcpy(model, "DEM-1000(?) TMU-001(?)");
 				break;
 				case 0x00020601:
 					flag = 1;
-					sprintf(model, "DTP-T1000 TMU-001 [%02x]", (int)region[0]);
+					strcat(tlotr, " (Dev Tool)");
+					strcpy(model, "DTP-T1000 TMU-001");
 				break;
 				case 0x00030601:
 					flag = 1;
-					sprintf(model, "DTP-H1500/DTP-L1500 TMU-002 [%02x]", (int)region[0]);
+					if ((int)region[0] == 0x02) {
+						strcat(tlotr, " (Test Tool)");
+						strcpy(model, "DTP-H1500 TMU-002");
+					} else {//if ((int)region[0] == 0x0e)
+						strcat(tlotr, " (Test Tool for AV)");
+						strcpy(model, "DTP-L1500 TMU-002");
+					}
 				break;
 
 				default:
@@ -397,6 +393,9 @@ int main(int argc, char*argv[]) {
 		break;
 	}
 
+	if (((int)c2dreg[0] == 0x02) && ((int)region[0] != (int)c2dreg[0]))
+		strcat(tlotr, " (fake Test Tool)");
+
 	if ((generation == 4) && (baryon == 0x002E4000)) {
 		strcat(model, " (fake 04g/real 09g)");
 	} else {
@@ -489,8 +488,10 @@ int main(int argc, char*argv[]) {
 				sceKernelDelayThread(1*1000*1000);
 			}
 
+			color(YELLOW);
 			printf(" Screenshot was saved to %s!\n", file);
 			printf(" The program will automatically quit after 8 seconds...\n");
+			color(WHITE);
 			sceKernelDelayThread(8*1000*1000);
 			break;
 		} else if (pad.Buttons & PSP_CTRL_CIRCLE) {
