@@ -9,10 +9,10 @@
 #include <string.h>
 #include "../lodepng_c18b949/lodepng.h"
 
-#define VER_MAJOR 1
-#define VER_MINOR 5
-#define VER_BUILD " \"Bourbon\""
-//#define VER_BUILD " \"Campari\""
+#define VER_MAJOR 2
+#define VER_MINOR 0
+#define VER_BUILD " \"Campari\""
+//#define VER_BUILD " \"Drambuie\""
 
 PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);
 PSP_MAIN_THREAD_ATTR(0);
@@ -72,6 +72,7 @@ void savepict(const char*file) {
 	}
 
 	encodeTwoSteps(file, image, 480, 272);
+	//unsigned LodePNG_encode32f(const char* filename, const unsigned char* image, unsigned w, unsigned h);
 	free(image);
 
 	// revert back colors
@@ -87,8 +88,8 @@ void savepict(const char*file) {
 }
 
 void warn(void) {
-	color(ORANGE);
 	int i;
+	color(ORANGE);
 	for (i = 0; i < 51; i++)
 		printf("-");
 	printf("\n");
@@ -100,15 +101,52 @@ void warn(void) {
 	color(WHITE);
 }
 
+void version_txt(void) {
+	int i;
+	int size;
+	SceUID fd;
+	unsigned char version[512];
+	unsigned char tab[4] = "   \0";
+	memset(version, 0, sizeof(version));
+
+	fd = sceIoOpen("flash0:/vsh/etc/version.txt", PSP_O_RDONLY, 0777);
+	if (fd >= 0) {
+		size = sceIoRead(fd, version, sizeof(version));
+		sceIoClose(fd);
+		color(LGRAY);
+		printf("%s", tab);
+		for (i = 0; i < size - 1; i++) {
+			if (version[i] == 0x0a)
+				printf("\n%s", tab);
+			else if (version[i] != 0x0d)
+				printf("%c", version[i]);
+		}
+		printf("\n");
+		color(WHITE);
+	}
+}
+
 int main(int argc, char*argv[]) {
 	pspDebugScreenInit();
 	pspDebugScreenClear();
 	printf("\n pspIdent v%i.%i%s by Yoti\n\n", VER_MAJOR, VER_MINOR, VER_BUILD);
 
+	int firmware = sceKernelDevkitVersion();
+
 	SceUID mod = pspSdkLoadStartModule("kernel.prx", PSP_MEMORY_PARTITION_KERNEL);
 	if (mod < 0) {
-		printf("Error: LoadStart() returned 0x%08x\n", mod);
-		sceKernelDelayThread(3*1000*1000);
+		color(ORANGE); printf(" *"); color(WHITE);
+		printf(" %-10s %x.%x%x (0x%08x)", "Firmware", firmware >> 24,
+				(firmware >> 16) & 0xff, (firmware >> 8) & 0xff, firmware);
+		printf("\n");
+		version_txt();
+		printf("\n");
+
+		color(YELLOW);
+		printf(" Error: pspSdkLoadStartModule() returned 0x%08x\n", mod);
+		printf(" The program will automatically quit after 8 seconds...\n");
+		color(WHITE);
+		sceKernelDelayThread(8*1000*1000);
 		sceKernelExitGame();
 	}
 
@@ -117,8 +155,7 @@ int main(int argc, char*argv[]) {
 	sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
 
 	int flag = 0;
-	int firmware = sceKernelDevkitVersion();
-	char shippedfw[5]; memset(shippedfw, 0, strlen(shippedfw));
+	char shippedfw[5]; memset(shippedfw, 0, sizeof(shippedfw));
 		prxIdStorageLookup(0x51, 0, shippedfw, 4);
 
 	int baryon; prxSysconGetBaryonVersion(&baryon);
@@ -126,7 +163,8 @@ int main(int argc, char*argv[]) {
 	int polestar; prxSysconGetPolestarVersion(&polestar);
 	int pommel; prxSysconGetPommelVersion(&pommel);
 	int tachyon = prxSysregGetTachyonVersion();
-	char times[64] = "\0"; prxSysconGetTimeStamp(times);
+	char times[64]; memset(times, 0, sizeof(times));
+		prxSysconGetTimeStamp(times);
 
 	int fusecfg = prxSysregGetFuseConfig();
 	long long fuseid = prxSysregGetFuseId();
@@ -135,12 +173,12 @@ int main(int argc, char*argv[]) {
 	int scramble = prxNandGetScramble();
 	char spock[4]; *(int*)spock = prxSysregGetSpockVersion();
 
-	char model[64] = "\0";
-	char c2dreg[2]; memset(c2dreg, 0, strlen(c2dreg));
+	char model[64]; memset(model, 0, sizeof(model));
+	char c2dreg[2]; memset(c2dreg, 0, sizeof(c2dreg));
 		prxIdStorageLookup(0x0100, 0x3D, &c2dreg, 1);
-	char region[2]; memset(region, 0, strlen(region));
+	char region[2]; memset(region, 0, sizeof(region));
 		prxIdStorageLookup(0x0100, 0xF5, &region, 1);
-	char tlotr[64] = "\0";
+	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
 
 	switch(tachyon) {
 		case 0x00140000: // TA-079v1/2/3
@@ -165,16 +203,17 @@ int main(int argc, char*argv[]) {
 					strcpy(model, "DEM-1000(?) TMU-001(?)");
 				break;
 				case 0x00020601:
-					flag = 1;
+					//flag = 1;
 					strcat(tlotr, " (Dev Tool)");
 					strcpy(model, "DTP-T1000 TMU-001");
 				break;
 				case 0x00030601:
-					flag = 1;
+					//flag = 1;
 					if ((int)region[0] == 0x02) {
 						strcat(tlotr, " (Test Tool)");
 						strcpy(model, "DTP-H1500 TMU-002");
 					} else {//if ((int)region[0] == 0x0e)
+						flag = 1;
 						strcat(tlotr, " (Test Tool for AV)");
 						strcpy(model, "DTP-L1500 TMU-002");
 					}
@@ -386,6 +425,15 @@ int main(int argc, char*argv[]) {
 				strcat(model, " TA-096/TA-097"); // TODO: proper detection*/
 		break;
 
+		case 0x8002013a:
+			u64 tick;
+			sceRtcGetCurrentTick(&tick);
+			srand(tick);
+			printf("%s", wiki[rand() % (sizeof(wiki) / sizeof(wiki[1]))]);
+			sceKernelDelayThread(8*1000*1000);
+			sceKernelExitGame();
+		break;
+
 		default:
 			flag = 1;
 			strcpy(tlotr, "???");
@@ -405,12 +453,13 @@ int main(int argc, char*argv[]) {
 	}
 
 	color(ORANGE); printf(" *"); color(WHITE);
-	printf(" %-10s %x.%x%x (", "Firmware", firmware >> 24,
-			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff);
-	printf("0x%08x)", firmware);
+	printf(" %-10s %x.%x%x (0x%08x)", "Firmware", firmware >> 24,
+			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff, firmware);
 	if (shippedfw[0] != 0)
 		printf(" [%s]", shippedfw);
-	printf("\n\n");
+	printf("\n");
+	version_txt();
+	printf("\n");
 
 	color(RED); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%08x [ROM:%08x]\n", "Tachyon", tachyon, bromver);
@@ -440,6 +489,15 @@ int main(int argc, char*argv[]) {
 
 	color(BLUE); printf(" *"); color(WHITE);
 	printf(" %s\n", model);
+	/*
+	color(BLUE); printf(" *"); color(WHITE);
+	if (generation == 5)
+		printf("IDS BT MAC"); printf("IDS WF Region");
+	else if (generation < 11)
+		printf("UMD Drive FW"); printf("IDS WF Region");
+	else
+		printf("UMD Drive FW");
+	*/
 	color(BLUE); printf(" *"); color(WHITE);
 	printf(" Call me ");
 	color(ORANGE); printf(tlotr); color(WHITE);

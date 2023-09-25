@@ -5,23 +5,17 @@
 #include <pspidstorage.h> // sceIdStorageLookup()
 #include <pspsysmem_kernel.h> // sceKernelGetModel()
 
-PSP_MODULE_INFO("kernel_prx", 0x1006, 1, 1);
+PSP_MODULE_INFO("kernel_prx", 0x1006, 1, 5);
 PSP_MAIN_THREAD_ATTR(0);
 
 int module_start(SceSize args, void*argp) {
+	Kprintf("pspident @ built: %s %s", __DATE__, __TIME__);
 	return 0;
 }
 
 int prxIdStorageLookup(u16 key, u32 offset, void*buf, u32 len) {
 	int k1 = pspSdkSetK1(0);
 	int ret = sceIdStorageLookup(key, offset, buf, len);
-	pspSdkSetK1(k1);
-	return ret;
-}
-
-int prxIdStorageReadLeaf(u16 key, void*buf) {
-	int k1 = pspSdkSetK1(0);
-	int ret = sceIdStorageReadLeaf(key, buf);
 	pspSdkSetK1(k1);
 	return ret;
 }
@@ -124,11 +118,11 @@ int prxSysregGetTachyonVersion(void) {
 	return tv;
 }
 
-// Draan
+// Draan, GalaXyHaXz, Yoti
 unsigned int prxTachyonGetTimeStamp(void) {
 	unsigned int ts;
 	asm volatile("cfc0 %0, $17" : "=r" (ts));
-	if (ts >> 24 == 0xa0)
+	if (ts & 0x80000000)
 		ts -= 0x80000000;
 	return ts;
 }
