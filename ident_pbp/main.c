@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../lodepng_c18b949/lodepng.h"
+#include "../lodepng/lodepng.h"
 
 #define VER_MAJOR 2
 #define VER_MINOR 0
@@ -29,20 +29,6 @@ u32*vramaddr(int x, int y) {
 	vram += y * 512;
 
 	return vram;
-}
-
-// https://lodev.org/lodepng/ https://github.com/lvandeve/lodepng/
-void encodeTwoSteps(const char*filename, const unsigned char*image, unsigned int width, unsigned int height) {
-	unsigned char*png;
-	size_t pngsize;
-
-	unsigned int error = lodepng_encode32(&png, &pngsize, image, width, height);
-	if (error)
-		printf("lodepng_encode32() error %u: %s\n", error, lodepng_error_text(error));
-	else
-		lodepng_save_file(png, pngsize, filename);
-
-	free(png);
 }
 
 void savepict(const char*file) {
@@ -71,8 +57,7 @@ void savepict(const char*file) {
 		vptr0 -= 512;
 	}
 
-	encodeTwoSteps(file, image, 480, 272);
-	//unsigned LodePNG_encode32f(const char* filename, const unsigned char* image, unsigned w, unsigned h);
+	lodepng_encode32_file(file, image, 480, 272);
 	free(image);
 
 	// revert back colors
@@ -89,7 +74,7 @@ void savepict(const char*file) {
 
 void warn(void) {
 	int i;
-	color(ORANGE);
+	color(YELLOW);
 	for (i = 0; i < 51; i++)
 		printf("-");
 	printf("\n");
@@ -142,7 +127,7 @@ int main(int argc, char*argv[]) {
 		version_txt();
 		printf("\n");
 
-		color(YELLOW);
+		color(ORANGE);
 		printf(" Error: pspSdkLoadStartModule() returned 0x%08x\n", mod);
 		printf(" The program will automatically quit after 8 seconds...\n");
 		color(WHITE);
@@ -174,6 +159,16 @@ int main(int argc, char*argv[]) {
 	char spock[4]; *(int*)spock = prxSysregGetSpockVersion();
 
 	char model[64]; memset(model, 0, sizeof(model));
+	unsigned char idsbtmac[7]; memset(idsbtmac, 0, sizeof(idsbtmac));
+		prxIdStorageLookup(0x0050, 0x41, &idsbtmac, 6);
+	char idswfreg[2]; memset(idswfreg, 0, sizeof(idswfreg));
+		prxIdStorageLookup(0x0045, 0x00, &idswfreg, 1);
+		if ((int)idswfreg[0] < 0)
+			idswfreg[0] = '\1';
+		else if ((int)idswfreg[0] > ((sizeof(WiFiRegion) / sizeof(WiFiRegion[0])) - 1))
+			idswfreg[0] = '\1';
+		if ((int)idswfreg[0] == 1)
+			flag = 1;
 	char c2dreg[2]; memset(c2dreg, 0, sizeof(c2dreg));
 		prxIdStorageLookup(0x0100, 0x3D, &c2dreg, 1);
 	char region[2]; memset(region, 0, sizeof(region));
@@ -203,17 +198,20 @@ int main(int argc, char*argv[]) {
 					strcpy(model, "DEM-1000(?) TMU-001(?)");
 				break;
 				case 0x00020601:
-					//flag = 1;
+					if (fusecfg != 0x2501)
+						flag = 1;
 					strcat(tlotr, " (Dev Tool)");
 					strcpy(model, "DTP-T1000 TMU-001");
 				break;
 				case 0x00030601:
-					//flag = 1;
 					if ((int)region[0] == 0x02) {
+						if (fusecfg != 0x2501)
+							flag = 1;
 						strcat(tlotr, " (Test Tool)");
 						strcpy(model, "DTP-H1500 TMU-002");
 					} else {//if ((int)region[0] == 0x0e)
-						flag = 1;
+						if (fusecfg != 0x1b01)
+							flag = 1;
 						strcat(tlotr, " (Test Tool for AV)");
 						strcpy(model, "DTP-L1500 TMU-002");
 					}
@@ -327,6 +325,10 @@ int main(int argc, char*argv[]) {
 
 		case 0x00600000:
 			switch(baryon) {
+				case 0x00234000:
+					strcpy(tlotr, "Frodo");
+					sprintf(model, "PSP-20%02i TA-085v2/TA-088v3 (hybrid)", ModelRegion[(int)region[0]]);
+				break;
 				case 0x00243000:
 					strcpy(tlotr, "Frodo");
 					sprintf(model, "PSP-20%02i TA-088v3", ModelRegion[(int)region[0]]);
@@ -429,7 +431,7 @@ int main(int argc, char*argv[]) {
 			u64 tick;
 			sceRtcGetCurrentTick(&tick);
 			srand(tick);
-			printf("%s", wiki[rand() % (sizeof(wiki) / sizeof(wiki[1]))]);
+			printf("%s", wiki[rand() % (sizeof(wiki) / sizeof(wiki[0]))]);
 			sceKernelDelayThread(8*1000*1000);
 			sceKernelExitGame();
 		break;
@@ -468,7 +470,7 @@ int main(int argc, char*argv[]) {
 	color(RED); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%08x\n", "Pommel", pommel);
 	color(RED); printf(" *"); color(WHITE);
-	printf(" %-10s 0x%08x\n", "Polestar", polestar); // 01g Polestars are 0x8xxx
+	printf(" %-10s 0x%08x\n", "Polestar", polestar); // 01g Polestars are 0x8###
 	printf("\n");
 
 	color(GREEN); printf(" *"); color(WHITE);
@@ -483,21 +485,20 @@ int main(int argc, char*argv[]) {
 	printf(" %-10s 0x%04x\n", "FuseCfg", fusecfg);
 	color(GREEN); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%08x\n", "Scramble", scramble);
-	color(GREEN); printf(" *"); color(WHITE);
-	printf(" %-10s %02ig\n", "Generation", generation);
 	printf("\n");
 
 	color(BLUE); printf(" *"); color(WHITE);
 	printf(" %s\n", model);
-	/*
 	color(BLUE); printf(" *"); color(WHITE);
 	if (generation == 5)
-		printf("IDS BT MAC"); printf("IDS WF Region");
-	else if (generation < 11)
-		printf("UMD Drive FW"); printf("IDS WF Region");
+		printf(" BlueTooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
+		idsbtmac[0], idsbtmac[1], idsbtmac[2], idsbtmac[3], idsbtmac[4], idsbtmac[5]);
 	else
-		printf("UMD Drive FW");
-	*/
+		printf(" UMD drive FW: [xxxxxxxxxx]\n");
+	if (generation < 11) {
+		color(BLUE); printf(" *"); color(WHITE);
+		printf(" Wi-Fi region: %s\n", WiFiRegion[(int)idswfreg[0]]);
+	}
 	color(BLUE); printf(" *"); color(WHITE);
 	printf(" Call me ");
 	color(ORANGE); printf(tlotr); color(WHITE);
@@ -546,7 +547,7 @@ int main(int argc, char*argv[]) {
 				sceKernelDelayThread(1*1000*1000);
 			}
 
-			color(YELLOW);
+			color(ORANGE);
 			printf(" Screenshot was saved to %s!\n", file);
 			printf(" The program will automatically quit after 8 seconds...\n");
 			color(WHITE);

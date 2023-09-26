@@ -1,8 +1,8 @@
 TARGET = eboot
-OBJS = main.o ../kernel_prx/kernel_prx.S ../lodepng_c18b949/lodepng.o
+OBJS = main.o ../kernel_prx/kernel_prx.S ../lodepng/lodepng.o
 
 INCDIR = 
-CFLAGS = -O2 -G0 -Wall
+CFLAGS = -O2 -G0 -Wall -Wno-trigraphs
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS) -c
 

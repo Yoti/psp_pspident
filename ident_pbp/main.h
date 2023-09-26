@@ -10,6 +10,7 @@
 #define ORANGE 0xff007fff
 
 int ModelRegion[16] = {0, 0, 0, 0, 1, 4, 5, 3, 10, 2, 6, 7, 8, 9, 0, 0};
+unsigned char WiFiRegion[4][16] = {"US (1-11)", "?? (1-??)", "EU (1-13)", "JP (1-14)"};
 
 typedef struct __attribute__((packed)) tagBITMAPFILEHEADER {
 	short	bfType;
