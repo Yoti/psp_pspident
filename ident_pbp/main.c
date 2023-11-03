@@ -299,9 +299,7 @@ int main(int argc, char*argv[]) {
 				case 0x00243000:
 					switch(pommel) {
 						case 0x00000123:
-							/*if (shippedfw[0] == '3')
-								strcat(model, "88v1");
-							else*/if (shippedfw[0] == '4')
+							if (shippedfw[0] == '4')
 								strcat(model, "88v2");
 							else
 								strcat(model, "88v1/v2"); // TODO: proper detection
@@ -419,12 +417,7 @@ int main(int argc, char*argv[]) {
 			strcpy(tlotr, "Bilbo");
 			sprintf(model, "PSP-E10%02i TA-096", ModelRegion[(int)region[0]]);
 			if (shippedfw[2] != '5')
-				strcat(model, "/TA-097");
-			/*sprintf(model, "PSP-E10%02i", ModelRegion[(int)region[0]]);
-			if (shippedfw[2] == '5')
-				strcat(model, " TA-096");
-			else
-				strcat(model, " TA-096/TA-097"); // TODO: proper detection*/
+				strcat(model, "/TA-097"); // TODO: proper detection
 		break;
 
 		case 0x8002013a:
@@ -455,12 +448,13 @@ int main(int argc, char*argv[]) {
 	}
 
 	color(ORANGE); printf(" *"); color(WHITE);
-	printf(" %-10s %x.%x%x (0x%08x)", "Firmware", firmware >> 24,
+	printf(" %-10s %x.%x%x (0x%08x)\n", "Firmware", firmware >> 24,
 			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff, firmware);
-	if (shippedfw[0] != 0)
-		printf(" [%s]", shippedfw);
-	printf("\n");
 	version_txt();
+	if (shippedfw[0] != 0) {
+		color(ORANGE); printf(" *"); color(WHITE);
+		printf(" %-10s %s\n", "Shipped", shippedfw);
+	}
 	printf("\n");
 
 	color(RED); printf(" *"); color(WHITE);
