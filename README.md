@@ -21,9 +21,9 @@ Open source and under MIT license
 * Added `version.txt` file output on screen
 * Added Wi-Fi region from IDS (except E1000)
 * Added Bluetooth MAC from IDS (only PSP Go)
-* Shipped FW now has it's own line on screen
+* Shipped FW now has its own line on screen
 * Partial TA-088v1/v2 detection (new algo)
-* Removed dublicated line with generation
+* Removed duplicated line with generation
 * Added QA Flag detection
 
 ## Building
