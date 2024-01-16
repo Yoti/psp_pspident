@@ -173,6 +173,10 @@ int main(int argc, char*argv[]) {
 		prxIdStorageLookup(0x0100, 0x3D, &c2dreg, 1);
 	char region[2]; memset(region, 0, sizeof(region));
 		prxIdStorageLookup(0x0100, 0xF5, &region, 1);
+	char c2dqaf[2]; memset(c2dqaf, 0, sizeof(c2dqaf));
+		prxIdStorageLookup(0x0100, 0x40, &c2dqaf, 1);
+	char qaflag[2]; memset(qaflag, 0, sizeof(qaflag));
+		prxIdStorageLookup(0x0100, 0xF8, &qaflag, 1);
 	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
 
 	switch(tachyon) {
@@ -299,8 +303,10 @@ int main(int argc, char*argv[]) {
 				case 0x00243000:
 					switch(pommel) {
 						case 0x00000123:
-							if (shippedfw[0] == '4')
-								strcat(model, "88v2");
+							// v1: 3.71/3.90/3.95
+							// v2: 3.95
+							if (shippedfw[0] != '5')
+								strcat(model, "88v1");
 							else
 								strcat(model, "88v1/v2"); // TODO: proper detection
 						break;
@@ -325,7 +331,7 @@ int main(int argc, char*argv[]) {
 			switch(baryon) {
 				case 0x00234000:
 					strcpy(tlotr, "Frodo");
-					sprintf(model, "PSP-20%02i TA-085v2/TA-088v3 (hybrid)", ModelRegion[(int)region[0]]);
+					sprintf(model, "PSP-20%02i TA-088v3/TA-085v2 (hybrid)", ModelRegion[(int)region[0]]);
 				break;
 				case 0x00243000:
 					strcpy(tlotr, "Frodo");
@@ -436,7 +442,7 @@ int main(int argc, char*argv[]) {
 		break;
 	}
 
-	if (((int)c2dreg[0] == 0x02) && ((int)region[0] != (int)c2dreg[0]))
+	if (((unsigned char)c2dreg[0] == 0x02) && ((unsigned char)region[0] != (unsigned char)c2dreg[0]))
 		strcat(tlotr, " (fake Test Tool)");
 
 	if ((generation == 4) && (baryon == 0x002E4000)) {
@@ -447,13 +453,22 @@ int main(int argc, char*argv[]) {
 		strcat(model, real_gen);
 	}
 
+	if ((unsigned char)c2dqaf[0] == 0x8C) { // QAF
+		if ((unsigned char)qaflag[0] != (unsigned char)c2dqaf[0])
+			strcat(model, " [fake QAF]");
+		else
+			strcat(model, " [QAF]");
+	} else { // non-QAF
+		strcat(model, " [non-QAF]");
+	}
+
 	color(ORANGE); printf(" *"); color(WHITE);
 	printf(" %-10s %x.%x%x (0x%08x)\n", "Firmware", firmware >> 24,
 			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff, firmware);
 	version_txt();
 	if (shippedfw[0] != 0) {
 		color(ORANGE); printf(" *"); color(WHITE);
-		printf(" %-10s %s\n", "Shipped", shippedfw);
+		printf(" %-10s %s\n", "Shipped FW", shippedfw);
 	}
 	printf("\n");
 
@@ -483,12 +498,18 @@ int main(int argc, char*argv[]) {
 
 	color(BLUE); printf(" *"); color(WHITE);
 	printf(" %s\n", model);
+	/*
 	color(BLUE); printf(" *"); color(WHITE);
 	if (generation == 5)
 		printf(" BlueTooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
 		idsbtmac[0], idsbtmac[1], idsbtmac[2], idsbtmac[3], idsbtmac[4], idsbtmac[5]);
 	else
-		printf(" UMD drive FW: [xxxxxxxxxx]\n");
+		printf(" UMD drive FW: [xxxxxxxxxx]\n");*/
+	if (generation == 5) {
+		color(BLUE); printf(" *"); color(WHITE);
+		printf(" BlueTooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
+		idsbtmac[0], idsbtmac[1], idsbtmac[2], idsbtmac[3], idsbtmac[4], idsbtmac[5]);
+	}
 	if (generation < 11) {
 		color(BLUE); printf(" *"); color(WHITE);
 		printf(" Wi-Fi region: %s\n", WiFiRegion[(int)idswfreg[0]]);
@@ -503,19 +524,15 @@ int main(int argc, char*argv[]) {
 
 	sceKernelDelayThread(1*1000*1000);
 
-	printf(" Press X to save screenshot\n");
-	printf(" Press O to quit the program\n");
+	printf(" Press X to save screenshot or O to quit the program\n");
 	for(;;) {
 		sceCtrlReadBufferPositive(&pad, 1);
 		if (pad.Buttons & PSP_CTRL_CROSS) {
 			int i;
-			pspDebugScreenSetXY(0, pspDebugScreenGetY()-2);
-			for (i = 0; i < 32; i++)
-				printf(" ");
-			pspDebugScreenSetXY(0, pspDebugScreenGetY()+1);
-			for (i = 0; i < 32; i++)
-				printf(" ");
 			pspDebugScreenSetXY(0, pspDebugScreenGetY()-1);
+			for (i = 0; i < 54; i++)
+				printf(" ");
+			pspDebugScreenSetXY(0, pspDebugScreenGetY());
 
 			char dir[128] = "\0";
 			sprintf(dir, "%c%c0:/PICTURE", argv[0][0], argv[0][1]);
