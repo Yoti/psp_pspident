@@ -10,9 +10,8 @@
 #include "../lodepng/lodepng.h"
 
 #define VER_MAJOR 2
-#define VER_MINOR 0
-#define VER_BUILD " \"Campari\""
-//#define VER_BUILD " \"Drambuie\""
+#define VER_MINOR 5
+#define VER_BUILD " \"Drambuie\""
 
 PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);
 PSP_MAIN_THREAD_ATTR(0);
@@ -498,18 +497,12 @@ int main(int argc, char*argv[]) {
 
 	color(BLUE); printf(" *"); color(WHITE);
 	printf(" %s\n", model);
-	/*
 	color(BLUE); printf(" *"); color(WHITE);
 	if (generation == 5)
-		printf(" BlueTooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
+		printf(" Bluetooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
 		idsbtmac[0], idsbtmac[1], idsbtmac[2], idsbtmac[3], idsbtmac[4], idsbtmac[5]);
 	else
 		printf(" UMD drive FW: [xxxxxxxxxx]\n");*/
-	if (generation == 5) {
-		color(BLUE); printf(" *"); color(WHITE);
-		printf(" BlueTooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
-		idsbtmac[0], idsbtmac[1], idsbtmac[2], idsbtmac[3], idsbtmac[4], idsbtmac[5]);
-	}
 	if (generation < 11) {
 		color(BLUE); printf(" *"); color(WHITE);
 		printf(" Wi-Fi region: %s\n", WiFiRegion[(int)idswfreg[0]]);
