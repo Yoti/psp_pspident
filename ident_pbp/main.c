@@ -394,6 +394,11 @@ int main(int argc, char*argv[]) {
 				case 0x012E4000:
 					strcat(model, "5v3"); // TA-095v3 [07g]
 				break;
+				case 0x00324000:
+					flag = 1;
+					strcpy(tlotr, "Strider2");
+					sprintf(model, "PSP-N10%02i TA-09?", ModelRegion[(int)region[0]]);
+				break;
 				default:
 					flag = 1;
 					strcat(model, "?"); // TA-09?
