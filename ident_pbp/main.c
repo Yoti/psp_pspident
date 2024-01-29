@@ -399,12 +399,12 @@ int main(int argc, char*argv[]) {
 				case 0x00323100:
 					flag = 1;
 					strcpy(tlotr, "Strider2");
-					sprintf(model, "PSP-N10%02i TA-09?v1", ModelRegion[(int)region[0]]);
+					sprintf(model, "PSP-N10%02i TA-094v1", ModelRegion[(int)region[0]]);
 				break;
 				case 0x00324000:
 					flag = 1;
 					strcpy(tlotr, "Strider2");
-					sprintf(model, "PSP-N10%02i TA-09?v2", ModelRegion[(int)region[0]]);
+					sprintf(model, "PSP-N10%02i TA-094v2", ModelRegion[(int)region[0]]);
 				break;
 				default:
 					flag = 1;
