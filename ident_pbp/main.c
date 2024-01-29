@@ -153,6 +153,8 @@ int main(int argc, char*argv[]) {
 	int fusecfg = prxSysregGetFuseConfig();
 	long long fuseid = prxSysregGetFuseId();
 	int generation = prxKernelGetModel() + 1;
+	if (generation == 6 || generation == 8 || generation == 10):
+		flag = 1;
 	char kirk[4]; *(int*)kirk = prxSysregGetKirkVersion();
 	int scramble = prxNandGetScramble();
 	char spock[4]; *(int*)spock = prxSysregGetSpockVersion();
@@ -394,10 +396,15 @@ int main(int argc, char*argv[]) {
 				case 0x012E4000:
 					strcat(model, "5v3"); // TA-095v3 [07g]
 				break;
+				case 0x00323100:
+					flag = 1;
+					strcpy(tlotr, "Strider2");
+					sprintf(model, "PSP-N10%02i TA-09?v1", ModelRegion[(int)region[0]]);
+				break;
 				case 0x00324000:
 					flag = 1;
 					strcpy(tlotr, "Strider2");
-					sprintf(model, "PSP-N10%02i TA-09?", ModelRegion[(int)region[0]]);
+					sprintf(model, "PSP-N10%02i TA-09?v2", ModelRegion[(int)region[0]]);
 				break;
 				default:
 					flag = 1;
