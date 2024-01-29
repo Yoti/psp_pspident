@@ -153,7 +153,7 @@ int main(int argc, char*argv[]) {
 	int fusecfg = prxSysregGetFuseConfig();
 	long long fuseid = prxSysregGetFuseId();
 	int generation = prxKernelGetModel() + 1;
-	if (generation == 6 || generation == 8 || generation == 10):
+	if (generation == 6 || generation == 8 || generation == 10)
 		flag = 1;
 	char kirk[4]; *(int*)kirk = prxSysregGetKirkVersion();
 	int scramble = prxNandGetScramble();
@@ -514,7 +514,7 @@ int main(int argc, char*argv[]) {
 		printf(" Bluetooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
 		idsbtmac[0], idsbtmac[1], idsbtmac[2], idsbtmac[3], idsbtmac[4], idsbtmac[5]);
 	else
-		printf(" UMD drive FW: [xxxxxxxxxx]\n");*/
+		printf(" UMD drive FW: [xxxxxxxxxx]\n");
 	if (generation < 11) {
 		color(BLUE); printf(" *"); color(WHITE);
 		printf(" Wi-Fi region: %s\n", WiFiRegion[(int)idswfreg[0]]);

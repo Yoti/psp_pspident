@@ -6,5 +6,9 @@ cd kernel_prx/
 make clean
 cd ../
 rm -rf PSP/
-rm EBOOT.PBP
-rm kernel.prx
+if test -f EBOOT.PBP; then
+	rm EBOOT.PBP
+fi
+if test -f kernel.prx; then
+	rm kernel.prx
+fi
