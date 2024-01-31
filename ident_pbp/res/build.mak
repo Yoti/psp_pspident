@@ -24,7 +24,7 @@ STRIP    = psp-strip
 MKSFO    = mksfoex
 PACK_PBP = pack-pbp
 FIXUP    = psp-fixup-imports
-PSPPACK  = python3 psppack.py --psptag 0xADF305F0
+PSPPACK  = python3 res/psppack.py --psptag 0xADF305F0
 
 # Add PSPSDK includes and libraries.
 INCDIR   := $(INCDIR) . $(PSPDEV)/psp/include $(PSPSDK)/include
