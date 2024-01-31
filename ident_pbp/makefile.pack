@@ -9,8 +9,9 @@ ASFLAGS = $(CFLAGS) -c
 PSP_FW_VERSION = 271
 
 BUILD_PRX = 1
+PSP_PACK = 1
 EXTRA_TARGETS = EBOOT.PBP
-PSP_EBOOT_TITLE = pspIdent v2.5 by Yoti
+PSP_EBOOT_TITLE = pspIdent TEST by Yoti
 PSP_EBOOT_ICON = ICON0.PNG
 
 LIBDIR = 
@@ -18,4 +19,4 @@ LIBS =
 LDFLAGS = -L.
 
 PSPSDK=$(shell psp-config --pspsdk-path)
-include $(PSPSDK)/lib/build.mak
+include res/build.mak

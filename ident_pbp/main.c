@@ -71,7 +71,7 @@ void savepict(const char*file) {
 	}
 }
 
-void warn(void) {
+void warn(int lvl) {
 	int i;
 	color(YELLOW);
 	for (i = 0; i < 51; i++)
@@ -181,43 +181,42 @@ int main(int argc, char*argv[]) {
 	char tlotr[64]; memset(tlotr, 0, sizeof(tlotr));
 
 	switch(tachyon) {
-		case 0x00140000: // TA-079v1/2/3
+		case 0x00140000: // TA-079v1/2/3 and more
 			strcpy(tlotr, "First");
-			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-079v");
+			sprintf(model, "PSP-10%02i TA-079v", ModelRegion[(int)region[0]]);
 
 			switch(baryon) {
-				case 0x00010600:
+				case 0x00010600: // TA-079v1
 					strcat(model, "1");
 				break;
-				case 0x00020600:
+				case 0x00020600: // TA-079v2
 					strcat(model, "2");
 				break;
-				case 0x00030600:
+				case 0x00030600: // TA-079v3
 					strcat(model, "3");
 				break;
 
 				case 0x00010601:
 					flag = 1;
-					strcat(tlotr, " (Proto Tool)");
+					strcpy(tlotr, "Proto Tool");
 					strcpy(model, "DEM-1000(?) TMU-001(?)");
 				break;
 				case 0x00020601:
 					if (fusecfg != 0x2501)
 						flag = 1;
-					strcat(tlotr, " (Dev Tool)");
+					strcpy(tlotr, "Dev Tool");
 					strcpy(model, "DTP-T1000 TMU-001");
 				break;
 				case 0x00030601:
 					if ((int)region[0] == 0x02) {
 						if (fusecfg != 0x2501)
 							flag = 1;
-						strcat(tlotr, " (Test Tool)");
+						strcpy(tlotr, "Test Tool");
 						strcpy(model, "DTP-H1500 TMU-002");
 					} else {//if ((int)region[0] == 0x0e)
 						if (fusecfg != 0x1b01)
 							flag = 1;
-						strcat(tlotr, " (Test Tool for AV)");
+						strcpy(tlotr, "Test Tool for AV");
 						strcpy(model, "DTP-L1500 TMU-002");
 					}
 				break;
@@ -231,8 +230,7 @@ int main(int argc, char*argv[]) {
 
 		case 0x00200000: // TA-079 v4/5
 			strcpy(tlotr, "First");
-			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-079v");
+			sprintf(model, "PSP-10%02i TA-079v", ModelRegion[(int)region[0]]);
 
 			switch(baryon) {
 				case 0x00030600:
@@ -372,11 +370,10 @@ int main(int argc, char*argv[]) {
 		break;
 
 		case 0x00810000:
-			strcpy(tlotr, "Samwise VA2");
-			sprintf(model, "PSP-30%02i TA-09", ModelRegion[(int)region[0]]);
 			switch(baryon) {
 				case 0x002C4000:
-					strcat(model, "3v"); // TA-093v
+					strcpy(tlotr, "Samwise VA2");
+					sprintf(model, "PSP-30%02i TA-093v", ModelRegion[(int)region[0]]);
 					switch(pommel) {
 						case 0x00000141:
 							strcat(model, "1"); // TA-093v1
@@ -390,25 +387,28 @@ int main(int argc, char*argv[]) {
 						break;
 					}
 				break;
-				case 0x002E4000:
-					strcat(model, "5v1"); // TA-095v1 [09g]
+				case 0x002E4000: // TA-095v1 [09g]
+					strcpy(tlotr, "Samwise VA2");
+					sprintf(model, "PSP-30%02i TA-095v1", ModelRegion[(int)region[0]]);
 				break;
-				case 0x012E4000:
-					strcat(model, "5v3"); // TA-095v3 [07g]
+				case 0x012E4000: // TA-095v3 [07g]
+					strcpy(tlotr, "Samwise VA2");
+					sprintf(model, "PSP-30%02i TA-095v3", ModelRegion[(int)region[0]]);
 				break;
-				case 0x00323100:
+				case 0x00323100: // TA-094 [v1] 0-ST2-001-A2
 					flag = 1;
 					strcpy(tlotr, "Strider2");
-					sprintf(model, "PSP-N10%02i TA-094v1", ModelRegion[(int)region[0]]);
+					sprintf(model, "PSP-N10%02i TA-094 0-ST2-001-A2", ModelRegion[(int)region[0]]);
 				break;
-				case 0x00324000:
+				case 0x00324000: // TA-094 [v2] 0-ST2-001-U4
 					flag = 1;
 					strcpy(tlotr, "Strider2");
-					sprintf(model, "PSP-N10%02i TA-094v2", ModelRegion[(int)region[0]]);
+					sprintf(model, "PSP-N10%02i TA-094 0-ST2-001-U4", ModelRegion[(int)region[0]]);
 				break;
 				default:
-					flag = 1;
-					strcat(model, "?"); // TA-09?
+					flag = 1; // TA-09?
+					strcpy(tlotr, "???");
+					sprintf(model, "PSP-?0%02i TA-09?", ModelRegion[(int)region[0]]);
 				break;
 			}
 		break;
@@ -514,7 +514,7 @@ int main(int argc, char*argv[]) {
 		printf(" Bluetooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
 		idsbtmac[0], idsbtmac[1], idsbtmac[2], idsbtmac[3], idsbtmac[4], idsbtmac[5]);
 	else
-		printf(" UMD drive FW: [xxxxxxxxxx]\n");
+		printf(" UMD drive FW: [xxxxxxxxxx]\n"); // TODO: implement
 	if (generation < 11) {
 		color(BLUE); printf(" *"); color(WHITE);
 		printf(" Wi-Fi region: %s\n", WiFiRegion[(int)idswfreg[0]]);
@@ -525,7 +525,7 @@ int main(int argc, char*argv[]) {
 	printf(", Gandalf!\n\n");
 
 	if (flag)
-		warn();
+		warn(flag);
 
 	sceKernelDelayThread(1*1000*1000);
 
