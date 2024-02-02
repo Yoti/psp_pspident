@@ -563,7 +563,9 @@ int kthread(){
         int foundUMD = _sceUmdExecInquiryCmd(_sceUmdManGetUmdDrive(0), param, buf2);
 		memset(outtxt, 0, sizeof(outtxt));
 		memcpy(&ai, buf2, sizeof(ATAPI_INQURIY));
-		strncpy(outtxt, ai.sony_spec, 5);
+		strncpy(outtxt, ai.sony_spec, 6);
+		strcat(outtxt, " ");
+		strncat(outtxt, &ai.sony_spec[6], 11);
 		if (foundUMD>=0)
 			printf(" UMD drive FW: [%s]\n", outtxt);
 		else
