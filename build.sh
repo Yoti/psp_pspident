@@ -4,10 +4,13 @@ rm -f EBOOT~.PBP
 cd ident_pbp/
 make clean
 make
-mv EBOOT.PBP EBOOT~.PBP
+rm -f EBOOT.PBP
 ../pencrypt/pencrypt eboot.prx
-echo EBOOT.PBP PARAM.SFO ICON0.PNG NULL NULL NULL NULL data.psp NULL
+echo Building encrypted EBOOT.PBP...
 pack-pbp EBOOT.PBP PARAM.SFO ICON0.PNG NULL NULL NULL NULL data.psp NULL
+if test -f EBOOT.PBP; then
+	echo EBOOT.PBP was successfully encrypted!
+fi
 cp EBOOT.PBP ../
 cd ../
 rm -rf PSP/

@@ -99,8 +99,9 @@ int main(int argc, char **argv) {
 	memset(elf, 0, 1024*1024*10);
 
 	kirk_init();
-	int hdrSize = pspHeader[0x2C] | ((int)pspHeader[0x2D] << 8) | ((int)pspHeader[0x2E] << 16) | ((int)pspHeader[0x2F] << 24);
-	int krawSize = hdrSize - 0x40;
+	int decSize = pspHeader[0x28] | ((int)pspHeader[0x29] << 8) | ((int)pspHeader[0x2A] << 16) | ((int)pspHeader[0x2B] << 24);
+	int encSize = pspHeader[0x2C] | ((int)pspHeader[0x2D] << 8) | ((int)pspHeader[0x2E] << 16) | ((int)pspHeader[0x2F] << 24);
+	int krawSize = encSize - 0x40;
 	int elfSize = load_elf(argv[1]);
 
 	if (elfSize > krawSize - 0x110) {

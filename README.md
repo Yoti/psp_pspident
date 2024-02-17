@@ -25,3 +25,6 @@ Open source and under MIT license
 * Partial TA-088v1/v2 detection (new algo)
 * Removed duplicated line with generation
 * Added QA Flag detection
+### v3.0 "Drambuie"
+* Added UMD FW version (except Go, by @krazynez)
+* pspIdent now runs on OFW (by @Acid_Snake)

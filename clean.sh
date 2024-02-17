@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-cd ident_pbp/
-make clean
-cd ../
-rm -rf PSP/
+if test -d PSP; then
+	rm -rf PSP/
+fi
 if test -f EBOOT.PBP; then
-	rm EBOOT.PBP
+	rm -f EBOOT.PBP
 fi
-if test -f EBOOT~.PBP; then
-	rm EBOOT~.PBP
+cd ident_pbp/
+make clean >nul
+if test -f data.psp; then
+	rm -f data.psp
 fi
+cd ../

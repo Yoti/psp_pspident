@@ -14,8 +14,8 @@
 #include "../lodepng/lodepng.h"
 #include "../kernel_lib/libpspexploit.h"
 
-#define VER_MAJOR 2
-#define VER_MINOR 5
+#define VER_MAJOR 3
+#define VER_MINOR 0
 #define VER_BUILD " \"Drambuie\""
 
 PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);
@@ -66,18 +66,6 @@ void savepict(const char*file) {
 	}
 
 	lodepng_encode32_file(file, image, 480, 272);
-	/*
-	// this if running kernel
-	unsigned char* buffer;
-  	size_t buffersize;
-	unsigned error = lodepng_encode_memory(&buffer, &buffersize, image, 480, 272, LCT_RGBA, 8);
-	if (!error){
-		int fd = k_tbl->KernelIOOpen(file, PSP_O_WRONLY|PSP_O_CREAT|PSP_O_TRUNC, 0777);
-		k_tbl->KernelIOWrite(fd, buffer, buffersize);
-		k_tbl->KernelIOClose(fd);
-	}
-	free(buffer);
-	*/
 	free(image);
 
 	// revert back colors
@@ -95,12 +83,10 @@ void savepict(const char*file) {
 int main(int argc, char* argv[]) {
 	pspDebugScreenInit();
 	pspDebugScreenClear();
-	printf("\n pspIdent v%i.%i%s by Yoti\n\n", VER_MAJOR, VER_MINOR, VER_BUILD);
+	printf("\n pspIdent v%i.%i%s by Yoti and friends\n\n", VER_MAJOR, VER_MINOR, VER_BUILD);
 
 	firmware = sceKernelDevkitVersion();
 
-
-	
 	int res = pspXploitInitKernelExploit();
     if (res == 0){
         res = pspXploitDoKernelExploit();
