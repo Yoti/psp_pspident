@@ -1,16 +1,7 @@
-#include <pspsdk.h>
-#include <pspkernel.h>
-#include <pspsyscon.h>
-#include <pspsysreg.h>
-#include <pspidstorage.h>
-#include <pspsysmem_kernel.h>
-#include <pspctrl.h>
-#include <pspdisplay.h>
 #include <pspge.h>
 #include <psprtc.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h> // sprintf()
+#include <stdlib.h> // malloc()
 #include "../lodepng/lodepng.h"
 #include "../kernel_lib/libpspexploit.h"
 
@@ -87,11 +78,13 @@ int main(int argc, char* argv[]) {
 
 	firmware = sceKernelDevkitVersion();
 
-	int res = pspXploitInitKernelExploit();
-    if (res == 0){
-        res = pspXploitDoKernelExploit();
-        if (res == 0){
-            pspXploitExecuteKernel(kmain);
+	int ret;
+	ret = pspXploitInitKernelExploit();
+	if (ret == 0) {
+		ret = pspXploitDoKernelExploit();
+		if (ret == 0) {
+			pspXploitExecuteKernel(kmain); // kernel.c
+
 			printf(" Press X to save screenshot or O to quit the program\n");
 			sceCtrlSetSamplingCycle(0);
 			sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
@@ -139,10 +132,19 @@ int main(int argc, char* argv[]) {
 				}
 				sceDisplayWaitVblank();
 			}
+		} else {
+			color(YELLOW);
+			printf("pspXploitDoKernelExploit = 0x%08x\n", ret);
+			color(WHITE);
+			sceKernelDelayThread(8*1000*1000);
 		}
+	} else {
+		color(YELLOW);
+		printf("pspXploitInitKernelExploit = 0x%08x\n", ret);
+		color(WHITE);
+		sceKernelDelayThread(8*1000*1000);
 	}
 
 	sceKernelExitGame();
 	return 0;
 }
-

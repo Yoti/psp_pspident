@@ -42,8 +42,7 @@ char tlotr[64];
 int flag = 0;
 
 static char outtxt[0x12]; 
-typedef struct 
-{
+typedef struct {
 	unsigned char peripheral_device_type;
 	unsigned char removable;
 	unsigned char standard_ver;
@@ -53,7 +52,7 @@ typedef struct
 	char product_id[16];
 	char product_rev[4];
 	char sony_spec[0x14];
-}ATAPI_INQURIY;
+} ATAPI_INQURIY;
 
 ATAPI_INQURIY ai;
 u8 buf2[0x38];
@@ -120,7 +119,6 @@ void version_txt(void) {
 	}
 }
 
-
 int prxKernelGetModel(void) {
 	int k1 = pspSdkSetK1(0);
 	int g = _sceKernelGetModel();
@@ -169,7 +167,6 @@ int prxSysregGetTachyonVersion(void) {
 	return sv;
 }
 
-
 // Draan, GalaXyHaXz, Yoti
 unsigned int prxTachyonGetTimeStamp(void) {
 	unsigned int ts;
@@ -179,8 +176,7 @@ unsigned int prxTachyonGetTimeStamp(void) {
 	return ts;
 }
 
-int kthread(){
-
+int kthread(void) {
 	memset(shippedfw, 0, sizeof(shippedfw));
 	_sceIdStorageLookup(0x51, 0, shippedfw, 4);
 
