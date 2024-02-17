@@ -6,3 +6,6 @@ rm -rf PSP/
 if test -f EBOOT.PBP; then
 	rm EBOOT.PBP
 fi
+if test -f EBOOT~.PBP; then
+	rm EBOOT~.PBP
+fi

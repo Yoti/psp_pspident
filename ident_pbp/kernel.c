@@ -567,9 +567,9 @@ int kthread(){
 		strcat(outtxt, " ");
 		strncat(outtxt, &ai.sony_spec[6], 11);
 		if (foundUMD>=0)
-			printf(" UMD drive FW: [%s]\n", outtxt);
+			printf(" UMD drive FW: %s\n", outtxt);
 		else
-			printf(" UMD drive FW: [%s]\n", "?????");
+			printf(" UMD drive FW: ?????\n");
     }
 	if (generation < 11) {
 		color(BLUE); printf(" *"); color(WHITE);

@@ -54,8 +54,10 @@ dkms.conf
 # Custom denies
 *.PBP
 *.prx
+*.psp
 *.SFO
 *.zip
 
 # Custom allows
 !kernel_lib/libpspexploit.a
+!pencrypt/pencrypt.exe
