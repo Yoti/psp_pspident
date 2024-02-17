@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lodepng/lodepng.h"
-#include "libpspexploit.h"
+#include "../lodepng/lodepng.h"
+#include "../kernel_lib/libpspexploit.h"
 
 #define VER_MAJOR 2
 #define VER_MINOR 5

@@ -12,8 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lodepng/lodepng.h"
-#include "libpspexploit.h"
+#include "../lodepng/lodepng.h"
+#include "../kernel_lib/libpspexploit.h"
 
 #include "main.h"
 

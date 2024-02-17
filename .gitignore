@@ -53,7 +53,9 @@ dkms.conf
 
 # Custom denies
 *.PBP
+*.prx
+*.SFO
 *.zip
 
 # Custom allows
-!ident_pbp/libpspexploit.a
+!kernel_lib/libpspexploit.a

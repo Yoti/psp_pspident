@@ -13,7 +13,7 @@ EXTRA_TARGETS = EBOOT.PBP
 PSP_EBOOT_TITLE = pspIdent v2.5 by Yoti
 PSP_EBOOT_ICON = ICON0.PNG
 
-LIBDIR = 
+LIBDIR = ../kernel_lib
 LIBS = -lpspexploit -lpsprtc
 LDFLAGS = -L.
 
