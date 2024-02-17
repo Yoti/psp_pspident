@@ -646,7 +646,6 @@ void kmain(){
 	_sceUmdManGetUmdDrive = pspXploitFindFunction("sceUmdMan_driver", "sceUmdMan_driver", 0x47E2B6D8);
 	_sceUmdExecInquiryCmd = pspXploitFindFunction("sceUmdMan_driver", "sceUmdMan_driver", 0x1B19A313);
 
-
 	// init kernel thread
 	SceUID kthreadID = k_tbl->KernelCreateThread("ident_kthread", (void*)KERNELIFY(&kthread), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
     if (kthreadID >= 0){
@@ -657,4 +656,3 @@ void kmain(){
 	pspXploitSetUserLevel(userlevel);
 	pspSdkSetK1(k1);
 }
-

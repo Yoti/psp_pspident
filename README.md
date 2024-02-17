@@ -23,15 +23,5 @@ Open source and under MIT license
 * Added Bluetooth MAC from IDS (only PSP Go)
 * Shipped FW now has it's own line on screen
 * Partial TA-088v1/v2 detection (new algo)
-* Removed dublicated line with generation
+* Removed duplicated line with generation
 * Added QA Flag detection
-
-## Building
-```
-cd kernel_prx/
-make
-psp-build-exports -s kernel_exp.exp
-cd ../
-cd ident_pbp/
-make
-```

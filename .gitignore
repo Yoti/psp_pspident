@@ -1,7 +1,5 @@
 # Prerequisites
 *.d
-*.SFO
-*.S
 
 # Object files
 *.o
@@ -12,6 +10,7 @@
 # Linker output
 *.ilk
 *.map
+*.exp
 
 # Precompiled Headers
 *.gch
@@ -28,7 +27,6 @@
 *.so
 *.so.*
 *.dylib
-*.prx
 
 # Executables
 *.exe
@@ -37,8 +35,6 @@
 *.i*86
 *.x86_64
 *.hex
-*.PBP
-*.zip
 
 # Debug files
 *.dSYM/
@@ -54,3 +50,10 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Custom denies
+*.PBP
+*.zip
+
+# Custom allows
+!ident_pbp/libpspexploit.a
