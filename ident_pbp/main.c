@@ -1,5 +1,6 @@
 #include <pspge.h>
 #include <psprtc.h>
+#include <pspdisplay.h>
 #include <stdio.h> // sprintf()
 #include <stdlib.h> // malloc()
 #include "../lodepng/lodepng.h"
@@ -71,12 +72,48 @@ void savepict(const char*file) {
 	}
 }
 
+void version_txt(void) {
+	int i;
+	int size;
+	SceUID fd;
+	unsigned char version[512];
+	unsigned char tab[4] = "   \0";
+	memset(version, 0, sizeof(version));
+
+	fd = sceIoOpen("flash0:/vsh/etc/version.txt", PSP_O_RDONLY, 0777);
+	if (fd >= 0) {
+		size = sceIoRead(fd, version, sizeof(version));
+		sceIoClose(fd);
+		color(LGRAY);
+		printf("%s", tab);
+		for (i = 0; i < size - 1; i++) {
+			if (version[i] == 0x0a)
+				printf("\n%s", tab);
+			else if (version[i] != 0x0d)
+				printf("%c", version[i]);
+		}
+		printf("\n");
+		color(WHITE);
+	}
+}
+
 int main(int argc, char* argv[]) {
 	pspDebugScreenInit();
 	pspDebugScreenClear();
-	printf("\n pspIdent v%i.%i%s by Yoti and friends\n\n", VER_MAJOR, VER_MINOR, VER_BUILD);
+
+	u64 tick;
+	sceRtcGetCurrentTick(&tick);
+	srand(tick);
+	if (rand() % 100 == 33)
+		printf("\n pspIdent v%i.%i%s by Yoti and F.R.I.E.N.D.S.\n\n", VER_MAJOR, VER_MINOR, VER_BUILD);
+	else
+		printf("\n pspIdent v%i.%i%s by Yoti and friends\n\n", VER_MAJOR, VER_MINOR, VER_BUILD);
 
 	firmware = sceKernelDevkitVersion();
+	color(ORANGE); printf(" *"); color(WHITE);
+	printf(" %-10s %x.%x%x (0x%08x)\n", "Firmware", firmware >> 24,
+			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff, firmware);
+	version_txt();
 
 	int ret;
 	ret = pspXploitInitKernelExploit();
@@ -134,13 +171,15 @@ int main(int argc, char* argv[]) {
 			}
 		} else {
 			color(YELLOW);
-			printf("pspXploitDoKernelExploit = 0x%08x\n", ret);
+			printf("\n Error: pspXploitDoKernelExploit = 0x%08x\n", ret);
+			printf(" The program will automatically quit after 8 seconds...\n");
 			color(WHITE);
 			sceKernelDelayThread(8*1000*1000);
 		}
 	} else {
 		color(YELLOW);
-		printf("pspXploitInitKernelExploit = 0x%08x\n", ret);
+		printf("\n Error: pspXploitInitKernelExploit = 0x%08x\n", ret);
+		printf(" The program will automatically quit after 8 seconds...\n");
 		color(WHITE);
 		sceKernelDelayThread(8*1000*1000);
 	}

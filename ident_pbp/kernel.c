@@ -15,7 +15,7 @@
 #include "../lodepng/lodepng.h"
 #include "../kernel_lib/libpspexploit.h"
 
-#include "main.h"
+#include "kernel.h"
 
 int firmware;
 char shippedfw[5];
@@ -58,7 +58,6 @@ ATAPI_INQURIY ai;
 u8 buf2[0x38];
 u8 param[4] = { 0, 0, 0x38, 0 };
 
-
 static KernelFunctions _ktbl; KernelFunctions* k_tbl = &_ktbl;
 int (*_sceSysregGetTachyonVersion)(void) = NULL;
 int (*_sceSysconGetBaryonVersion)(int*) = NULL;
@@ -93,7 +92,7 @@ void warn(void) {
 	printf("\n\n");
 	color(WHITE);
 }
-
+/*
 void version_txt(void) {
 	int i;
 	int size;
@@ -118,7 +117,7 @@ void version_txt(void) {
 		color(WHITE);
 	}
 }
-
+*/
 int prxKernelGetModel(void) {
 	int k1 = pspSdkSetK1(0);
 	int g = _sceKernelGetModel();
@@ -513,10 +512,12 @@ int kthread(void) {
 		strcat(model, " [non-QAF]");
 	}
 
+/*
 	color(ORANGE); printf(" *"); color(WHITE);
 	printf(" %-10s %x.%x%x (0x%08x)\n", "Firmware", firmware >> 24,
 			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff, firmware);
 	version_txt();
+*/
 	if (shippedfw[0] != 0) {
 		color(ORANGE); printf(" *"); color(WHITE);
 		printf(" %-10s %s\n", "Shipped FW", shippedfw);
@@ -536,7 +537,7 @@ int kthread(void) {
 	color(GREEN); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
 	color(GREEN); printf(" *"); color(WHITE);
-	if(generation == 5 || generation == 6)
+	if (generation == 5 || generation == 6)
 		printf(" %-10s %c\n", "Spock", 0x01);
 	else	
 		printf(" %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
@@ -552,11 +553,11 @@ int kthread(void) {
 	color(BLUE); printf(" *"); color(WHITE);
 	printf(" %s\n", model);
 	color(BLUE); printf(" *"); color(WHITE);
-	if (generation == 5)
+	if (generation == 5 || generation == 6)
 		printf(" Bluetooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
 		idsbtmac[0], idsbtmac[1], idsbtmac[2], idsbtmac[3], idsbtmac[4], idsbtmac[5]);
 	else {
-        int foundUMD = _sceUmdExecInquiryCmd(_sceUmdManGetUmdDrive(0), param, buf2);
+		int foundUMD = _sceUmdExecInquiryCmd(_sceUmdManGetUmdDrive(0), param, buf2);
 		memset(outtxt, 0, sizeof(outtxt));
 		memcpy(&ai, buf2, sizeof(ATAPI_INQURIY));
 		strncpy(outtxt, ai.sony_spec, 6);
@@ -566,7 +567,7 @@ int kthread(void) {
 			printf(" UMD drive FW: %s\n", outtxt);
 		else
 			printf(" UMD drive FW: ?????\n");
-    }
+	}
 	if (generation < 11) {
 		color(BLUE); printf(" *"); color(WHITE);
 		printf(" Wi-Fi region: %s\n", WiFiRegion[(int)idswfreg[0]]);
@@ -644,11 +645,11 @@ void kmain(){
 
 	// init kernel thread
 	SceUID kthreadID = k_tbl->KernelCreateThread("ident_kthread", (void*)KERNELIFY(&kthread), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
-    if (kthreadID >= 0){
-        // start thread and wait for it to end
-        k_tbl->KernelStartThread(kthreadID, 0, NULL);
-        k_tbl->waitThreadEnd(kthreadID, NULL);
-    }
+	if (kthreadID >= 0){
+		// start thread and wait for it to end
+		k_tbl->KernelStartThread(kthreadID, 0, NULL);
+		k_tbl->waitThreadEnd(kthreadID, NULL);
+	}
 	pspXploitSetUserLevel(userlevel);
 	pspSdkSetK1(k1);
 }

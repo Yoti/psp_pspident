@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 rm -f EBOOT.PBP
-rm -f EBOOT~.PBP
 cd ident_pbp/
 make clean>/dev/null
 make>/dev/null
