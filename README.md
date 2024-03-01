@@ -27,5 +27,5 @@ Open source and under MIT license
 * Added QA Flag detection
 ### v3.0 "Drambuie"
 * Added UMD FW version (except Go, by @krazynez)
-* PSP Go TA-094 (codename Strider2) detection
-* pspIdent now runs on OFW (by @Acid_Snake)
+* Added PSP Go TA-094 (codename Strider2) detection
+* pspIdent now runs on OFW (by @[Acid_Snake](https://github.com/JoseAaronLopezGarcia))
