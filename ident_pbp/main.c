@@ -22,9 +22,9 @@ extern void kmain();
 SceCtrlData pad;
 
 u32*vramaddr(int x, int y) {
-	u32 *vram;
+	u32*vram;
 
-	vram = (void *)(0x40000000 | (u32)sceGeEdramGetAddr());
+	vram = (void*)(0x40000000 | (u32)sceGeEdramGetAddr());
 	vram += x;
 	vram += y * 512;
 
@@ -60,7 +60,7 @@ void savepict(const char*file) {
 	lodepng_encode32_file(file, image, 480, 272);
 	free(image);
 
-	// revert back colors
+	// revert colors back
 	vptr0 = vramaddr(0, 272 - 1);
 	for (h = 0; h < 272; h++) {
 		vptr = vptr0;
@@ -97,7 +97,7 @@ void version_txt(void) {
 	}
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char*argv[]) {
 	pspDebugScreenInit();
 	pspDebugScreenClear();
 

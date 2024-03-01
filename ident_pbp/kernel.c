@@ -1,47 +1,35 @@
-#include <pspsdk.h>
-#include <pspkernel.h>
-#include <pspsyscon.h>
-#include <pspsysreg.h>
-#include <pspidstorage.h>
 #include <pspsysmem_kernel.h>
-#include <pspctrl.h>
-#include <pspdisplay.h>
-#include <pspge.h>
-#include <psprtc.h>
-#include <pspumd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "../lodepng/lodepng.h"
 #include "../kernel_lib/libpspexploit.h"
 
 #include "kernel.h"
 
-int firmware;
+char c2dqaf[2];
+char c2dreg[2];
+char idswfreg[2];
+char kirk[4];
+char model[64];
+char qaflag[2];
+char region[2];
 char shippedfw[5];
+char spock[4];
+char times[64]; 
+char tlotr[64]; 
 int baryon; 
-unsigned int bromver;
+int firmware;
+int flag = 0;
+int fusecfg;
+int generation;
 int polestar;
 int pommel;
-int tachyon;
-char times[64]; 
-int fusecfg;
-long long fuseid;
-int generation;
-char kirk[4];
 int scramble;
-char spock[4];
-char model[64];
+int tachyon;
+long long fuseid;
 unsigned char idsbtmac[7];
-char idswfreg[2];
-char c2dreg[2];
-char region[2];
-char c2dqaf[2];
-char qaflag[2];
-char tlotr[64]; 
-int flag = 0;
+unsigned int bromver;
+u64 tick;
 
-static char outtxt[0x12]; 
 typedef struct {
 	unsigned char peripheral_device_type;
 	unsigned char removable;
@@ -55,29 +43,26 @@ typedef struct {
 } ATAPI_INQURIY;
 
 ATAPI_INQURIY ai;
-u8 buf2[0x38];
-u8 param[4] = { 0, 0, 0x38, 0 };
+u8 param[4] = {0, 0, 0x38, 0};
 
-static KernelFunctions _ktbl; KernelFunctions* k_tbl = &_ktbl;
-int (*_sceSysregGetTachyonVersion)(void) = NULL;
-int (*_sceSysconGetBaryonVersion)(int*) = NULL;
-int (*_sceSysconGetPommelVersion)(int*) = NULL;
-int (*_sceSysregGetFuseConfig)(void) = NULL;
-long long (*_sceSysregGetFuseId)(void) = NULL;
-int (*_sceSysconGetPolestarVersion)(int*) = NULL;
-int (*_sceSysconGetTimeStamp)(int*) = NULL;
-int (*_sceSysregAtaBusClockEnable)(void) = NULL;
-int (*_sceSysregKirkBusClockEnable)(void) = NULL;
-int (*_sceKernelGetModel)(void) = NULL;
+static KernelFunctions _ktbl; KernelFunctions*k_tbl = &_ktbl;
 int (*_sceIdStorageLookup)(int, int, void*, int) = NULL;
 int (*_sceKernelDelayThread)(int) = NULL;
 int (*_sceKernelExitDeleteThread)(int) = NULL;
-int (*_sceRtcGetCurrentTick)(void*) = NULL;
+int (*_sceKernelGetModel)(void) = NULL;
 int (*_sceKernelUtilsSha1Digest)(u8*, int, u8*) = NULL;
-void* (*_sceUmdManGetUmdDrive)(int) = NULL;
+int (*_sceRtcGetCurrentTick)(void*) = NULL;
+int (*_sceSysconGetBaryonVersion)(int*) = NULL;
+int (*_sceSysconGetPolestarVersion)(int*) = NULL;
+int (*_sceSysconGetPommelVersion)(int*) = NULL;
+int (*_sceSysconGetTimeStamp)(int*) = NULL;
+int (*_sceSysregAtaBusClockEnable)(void) = NULL;
+int (*_sceSysregGetFuseConfig)(void) = NULL;
+int (*_sceSysregGetTachyonVersion)(void) = NULL;
+int (*_sceSysregKirkBusClockEnable)(void) = NULL;
 int (*_sceUmdExecInquiryCmd)(void*, int*, int*) = NULL;
-
-u64 tick;
+long long (*_sceSysregGetFuseId)(void) = NULL;
+void* (*_sceUmdManGetUmdDrive)(int) = NULL;
 
 void warn(void) {
 	int i;
@@ -92,32 +77,7 @@ void warn(void) {
 	printf("\n\n");
 	color(WHITE);
 }
-/*
-void version_txt(void) {
-	int i;
-	int size;
-	SceUID fd;
-	unsigned char version[512];
-	unsigned char tab[4] = "   \0";
-	memset(version, 0, sizeof(version));
 
-	fd = k_tbl->KernelIOOpen("flash0:/vsh/etc/version.txt", PSP_O_RDONLY, 0777);
-	if (fd >= 0) {
-		size = k_tbl->KernelIORead(fd, version, sizeof(version));
-		k_tbl->KernelIOClose(fd);
-		color(LGRAY);
-		printf("%s", tab);
-		for (i = 0; i < size - 1; i++) {
-			if (version[i] == 0x0a)
-				printf("\n%s", tab);
-			else if (version[i] != 0x0d)
-				printf("%c", version[i]);
-		}
-		printf("\n");
-		color(WHITE);
-	}
-}
-*/
 int prxKernelGetModel(void) {
 	int k1 = pspSdkSetK1(0);
 	int g = _sceKernelGetModel();
@@ -216,44 +176,47 @@ int kthread(void) {
 	memset(tlotr, 0, sizeof(tlotr));
 
 	switch(tachyon) {
-		case 0x00140000: // TA-079v1/2/3
+		case 0x00140000: // TA-079v1/2/3 and more
 			strcpy(tlotr, "First");
-			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-079v");
+			sprintf(model, "PSP-10%02i TA-079v", ModelRegion[(int)region[0]]);
 
 			switch(baryon) {
-				case 0x00010600:
+				case 0x00010600: // TA-079v1
 					strcat(model, "1");
 				break;
-				case 0x00020600:
+				case 0x00020600: // TA-079v2
 					strcat(model, "2");
 				break;
-				case 0x00030600:
+				case 0x00030600: // TA-079v3
 					strcat(model, "3");
 				break;
 
 				case 0x00010601:
 					flag = 1;
-					strcat(tlotr, " (Proto Tool)");
+					strcpy(tlotr, "Proto Tool");
 					strcpy(model, "DEM-1000(?) TMU-001(?)");
 				break;
 				case 0x00020601:
 					if (fusecfg != 0x2501)
 						flag = 1;
-					strcat(tlotr, " (Dev Tool)");
+					strcpy(tlotr, "Dev Tool");
 					strcpy(model, "DTP-T1000 TMU-001");
 				break;
 				case 0x00030601:
 					if ((int)region[0] == 0x02) {
 						if (fusecfg != 0x2501)
 							flag = 1;
-						strcat(tlotr, " (Test Tool)");
+						strcpy(tlotr, "Test Tool");
 						strcpy(model, "DTP-H1500 TMU-002");
-					} else {//if ((int)region[0] == 0x0e)
+					} else if ((int)region[0] == 0x0e) {
 						if (fusecfg != 0x1b01)
 							flag = 1;
-						strcat(tlotr, " (Test Tool for AV)");
+						strcpy(tlotr, "Test Tool for AV");
 						strcpy(model, "DTP-L1500 TMU-002");
+					} else {
+						flag = 1;
+						strcpy(tlotr, "Unknown Test Tool(?)");
+						strcpy(model, "Unknown model and mobo");
 					}
 				break;
 
@@ -266,8 +229,7 @@ int kthread(void) {
 
 		case 0x00200000: // TA-079 v4/5
 			strcpy(tlotr, "First");
-			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-079v");
+			sprintf(model, "PSP-10%02i TA-079v", ModelRegion[(int)region[0]]);
 
 			switch(baryon) {
 				case 0x00030600:
@@ -285,8 +247,7 @@ int kthread(void) {
 
 		case 0x00300000: // TA-081v1/2
 			strcpy(tlotr, "First");
-			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-081v");
+			sprintf(model, "PSP-10%02i TA-081v", ModelRegion[(int)region[0]]);
 
 			switch(pommel) {
 				case 0x00000103:
@@ -304,8 +265,7 @@ int kthread(void) {
 
 		case 0x00400000: // TA-082/6
 			strcpy(tlotr, "Legolas");
-			sprintf(model, "PSP-10%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-08");
+			sprintf(model, "PSP-10%02i TA-08", ModelRegion[(int)region[0]]);
 
 			switch(baryon) {
 				case 0x00114000:
@@ -326,8 +286,7 @@ int kthread(void) {
 
 		case 0x00500000: // TA-085/8
 			strcpy(tlotr, "Frodo");
-			sprintf(model, "PSP-20%02i", ModelRegion[(int)region[0]]);
-			strcat(model, " TA-0");
+			sprintf(model, "PSP-20%02i TA-0", ModelRegion[(int)region[0]]);
 
 			switch(baryon) {
 				case 0x0022B200:
@@ -346,7 +305,7 @@ int kthread(void) {
 							else
 								strcat(model, "88v1/v2"); // TODO: proper detection
 						break;
-						case 0x00000132:
+						case 0x00000132: // TA-090v1 0-FV2-001-P1
 							flag = 1; // TODO: remove after proof
 							strcat(model, "90v1");
 						break;
@@ -410,13 +369,13 @@ int kthread(void) {
 			switch(baryon) {
 				case 0x002C4000:
 					strcpy(tlotr, "Samwise VA2");
-					sprintf(model, "PSP-30%02i TA-09", ModelRegion[(int)region[0]]);
+					sprintf(model, "PSP-30%02i TA-093v", ModelRegion[(int)region[0]]);
 					switch(pommel) {
 						case 0x00000141:
-							strcat(model, "3v1"); // TA-093v1
+							strcat(model, "1"); // TA-093v1
 						break;
 						case 0x00000143:
-							strcat(model, "3v2"); // TA-093v2
+							strcat(model, "2"); // TA-093v2
 						break;
 						default:
 							flag = 1;
@@ -424,30 +383,28 @@ int kthread(void) {
 						break;
 					}
 				break;
-				case 0x002E4000:
+				case 0x002E4000: // TA-095v1 [09g]
 					strcpy(tlotr, "Samwise VA2");
-					sprintf(model, "PSP-30%02i TA-09", ModelRegion[(int)region[0]]);
-					strcat(model, "5v1"); // TA-095v1 [09g]
+					sprintf(model, "PSP-30%02i TA-095v1", ModelRegion[(int)region[0]]);
 				break;
-				case 0x012E4000:
+				case 0x012E4000: // TA-095v3 [07g]
 					strcpy(tlotr, "Samwise VA2");
-					sprintf(model, "PSP-30%02i TA-09", ModelRegion[(int)region[0]]);
-					strcat(model, "5v3"); // TA-095v3 [07g]
+					sprintf(model, "PSP-30%02i TA-095v3", ModelRegion[(int)region[0]]);
 				break;
-				case 0x00323100:
+				case 0x00323100: // TA-094 [v1] 0-ST2-001-A2
+					flag = 1;
 					strcpy(tlotr, "Strider2");
-					sprintf(model, "PSP-N10%02i TA-09", ModelRegion[(int)region[0]]);
-					strcat(model, "4v1"); // TA-094v1 [06g]
+					sprintf(model, "PSP-N10%02i TA-094 0-ST2-001-A2", ModelRegion[(int)region[0]]);
 				break;
-				case 0x00324000:
+				case 0x00324000: // TA-094 [v2] 0-ST2-001-U4
+					flag = 1;
 					strcpy(tlotr, "Strider2");
-					sprintf(model, "PSP-N10%02i TA-09", ModelRegion[(int)region[0]]);
-					strcat(model, "4v2"); // TA-094v2 [06g]
+					sprintf(model, "PSP-N10%02i TA-094 0-ST2-001-U4", ModelRegion[(int)region[0]]);
 				break;
 				default:
-					flag = 1;
-					strcpy(tlotr, "Unknown");
-					strcat(model, "?"); // TA-09?
+					flag = 1; // TA-09?
+					strcpy(tlotr, "???");
+					sprintf(model, "PSP-?0%02i TA-09?", ModelRegion[(int)region[0]]);
 				break;
 			}
 		break;
@@ -472,7 +429,7 @@ int kthread(void) {
 		case 0x00900000:
 			strcpy(tlotr, "Bilbo");
 			sprintf(model, "PSP-E10%02i TA-096", ModelRegion[(int)region[0]]);
-			if (shippedfw[2] != '5')
+			if (shippedfw[2] != '5') // shipped FW is newer than 6.50
 				strcat(model, "/TA-097"); // TODO: proper detection
 		break;
 
@@ -512,12 +469,6 @@ int kthread(void) {
 		strcat(model, " [non-QAF]");
 	}
 
-/*
-	color(ORANGE); printf(" *"); color(WHITE);
-	printf(" %-10s %x.%x%x (0x%08x)\n", "Firmware", firmware >> 24,
-			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff, firmware);
-	version_txt();
-*/
 	if (shippedfw[0] != 0) {
 		color(ORANGE); printf(" *"); color(WHITE);
 		printf(" %-10s %s\n", "Shipped FW", shippedfw);
@@ -537,9 +488,7 @@ int kthread(void) {
 	color(GREEN); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
 	color(GREEN); printf(" *"); color(WHITE);
-	if (generation == 5 || generation == 6)
-		printf(" %-10s %c\n", "Spock", 0x01);
-	else	
+	if (generation != 5 && generation != 6)
 		printf(" %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
 	
 	color(GREEN); printf(" *"); color(WHITE);
@@ -557,16 +506,17 @@ int kthread(void) {
 		printf(" Bluetooth MAC: %02x:%02x:%02x:%02x:%02x:%02x\n",
 		idsbtmac[0], idsbtmac[1], idsbtmac[2], idsbtmac[3], idsbtmac[4], idsbtmac[5]);
 	else {
-		int foundUMD = _sceUmdExecInquiryCmd(_sceUmdManGetUmdDrive(0), param, buf2);
-		memset(outtxt, 0, sizeof(outtxt));
-		memcpy(&ai, buf2, sizeof(ATAPI_INQURIY));
-		strncpy(outtxt, ai.sony_spec, 6);
-		strcat(outtxt, " ");
-		strncat(outtxt, &ai.sony_spec[6], 11);
-		if (foundUMD>=0)
-			printf(" UMD drive FW: %s\n", outtxt);
-		else
-			printf(" UMD drive FW: ?????\n");
+		int foundUMD = _sceUmdExecInquiryCmd(_sceUmdManGetUmdDrive(0), param, &ai);
+		printf(" UMD drive FW: ");
+		if (foundUMD >= 0) {
+			for (int tmp = 0; tmp < sizeof(ai.sony_spec); tmp++)
+				if (ai.sony_spec[tmp] == 0)
+					printf(" ");
+				else
+					printf("%c", ai.sony_spec[tmp]);
+		} else
+			printf(":(");
+		printf("\n");
 	}
 	if (generation < 11) {
 		color(BLUE); printf(" *"); color(WHITE);
@@ -586,41 +536,40 @@ int kthread(void) {
 	return 0;
 }
 
-u32 findGetModel(){
+u32 findGetModel() {
 	u32 addr;
-	for (addr = 0x88000000; addr<0x88400000; addr+=4){
+	for (addr = 0x88000000; addr < 0x88400000; addr += 4) {
 		u32 data = _lw(addr);
-		if (data == 0x3C03BC10){
+		if (data == 0x3C03BC10) {
 			return pspXploitFindFirstJALReverse(addr);
 		}
 	}
 	return 0;
 }
 
-u32 findKirkBusClockEnable(char* modname){
+u32 findKirkBusClockEnable(char*modname) {
 	u32 addr = pspXploitFindTextAddrByName(modname);
-	u32 topaddr = addr+(128*1024);
+	u32 topaddr = addr + (128 * 1024);
 	int count = 1;
-	for (;addr<topaddr; addr+=4){
-		if (_lw(addr)==0x24040080 && _lw(addr+8)==0x24050001){
-			if (count) count--;
-			else return addr;
+	for (; addr<topaddr; addr += 4) {
+		if (_lw(addr) == 0x24040080 && _lw(addr + 8) == 0x24050001) {
+			if (count)
+				count--;
+			else
+				return addr;
 		}
 	}
 	return 0;
 }
 
-void kmain(){
+void kmain() {
 	int k1 = pspSdkSetK1(0);
 	int userlevel = pspXploitSetUserLevel(8);
 
-
-	// Setup all the functions
 	pspXploitRepairKernel();
 	pspXploitScanKernelFunctions(k_tbl);
-	
 
-	char* sysreg_mod = (pspXploitFindTextAddrByName("sceLowIO_Driver") == NULL)? "sceSYSREG_Driver" : "sceLowIO_Driver";
+	char*sysreg_mod = (pspXploitFindTextAddrByName("sceLowIO_Driver") == 0) ? "sceSYSREG_Driver" : "sceLowIO_Driver";
 
 	_sceSysregGetTachyonVersion = pspXploitFindFunction(sysreg_mod, "sceSysreg_driver", 0xE2A5D1EE);
 	_sceSysconGetBaryonVersion = pspXploitFindFunction("sceSYSCON_Driver", "sceSyscon_driver", 0x7EC5A957);
@@ -639,17 +588,15 @@ void kmain(){
 	_sceRtcGetCurrentTick = pspXploitFindFunction("sceRTC_Service", "sceRtc", 0x3F7AD767);
 	_sceKernelUtilsSha1Digest = pspXploitFindFunction("sceSystemMemoryManager", "UtilsForUser", 0x840259F1);
 
-	// Get UMD Firmware
 	_sceUmdManGetUmdDrive = pspXploitFindFunction("sceUmdMan_driver", "sceUmdMan_driver", 0x47E2B6D8);
 	_sceUmdExecInquiryCmd = pspXploitFindFunction("sceUmdMan_driver", "sceUmdMan_driver", 0x1B19A313);
 
-	// init kernel thread
 	SceUID kthreadID = k_tbl->KernelCreateThread("ident_kthread", (void*)KERNELIFY(&kthread), 1, 0x20000, PSP_THREAD_ATTR_VFPU, NULL);
 	if (kthreadID >= 0){
-		// start thread and wait for it to end
 		k_tbl->KernelStartThread(kthreadID, 0, NULL);
 		k_tbl->waitThreadEnd(kthreadID, NULL);
 	}
+
 	pspXploitSetUserLevel(userlevel);
 	pspSdkSetK1(k1);
 }
