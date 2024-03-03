@@ -29,3 +29,5 @@ Open source and under MIT license
 * Added UMD FW version (except Go, by @krazynez)
 * Added PSP Go TA-094 (codename Strider2) detection
 * pspIdent now runs on OFW (by @[Acid_Snake](https://github.com/JoseAaronLopezGarcia))
+### v3.1 "Drambuie"
+* A little fix for the PSP Go output and nothing more
