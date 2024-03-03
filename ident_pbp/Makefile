@@ -10,7 +10,7 @@ PSP_FW_VERSION = 271
 
 BUILD_PRX = 1
 EXTRA_TARGETS = EBOOT.PBP
-PSP_EBOOT_TITLE = pspIdent v3.1 by Yoti and friends
+PSP_EBOOT_TITLE = pspIdent v3.2 by Yoti and friends
 PSP_EBOOT_ICON = ICON0.PNG
 
 LIBDIR = ../kernel_lib

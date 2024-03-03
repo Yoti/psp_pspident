@@ -183,12 +183,18 @@ int kthread(void) {
 			switch(baryon) {
 				case 0x00010600: // TA-079v1
 					strcat(model, "1");
+					if (pommel != 0x103)
+						flag = 1;
 				break;
 				case 0x00020600: // TA-079v2
 					strcat(model, "2");
+					if (pommel != 0x103)
+						flag = 1;
 				break;
 				case 0x00030600: // TA-079v3
 					strcat(model, "3");
+					if (pommel != 0x103)
+						flag = 1;
 				break;
 
 				case 0x00010601:
@@ -234,9 +240,13 @@ int kthread(void) {
 			switch(baryon) {
 				case 0x00030600:
 					strcat(model, "4");
+					if (pommel != 0x103)
+						flag = 1;
 				break;
 				case 0x00040600:
 					strcat(model, "5");
+					if (pommel != 0x103)
+						flag = 1;
 				break;
 				default:
 					flag = 1;
@@ -252,9 +262,13 @@ int kthread(void) {
 			switch(pommel) {
 				case 0x00000103:
 					strcat(model, "1");
+					if (pommel != 0x103)
+						flag = 1;
 				break;
 				case 0x00000104:
 					strcat(model, "2");
+					if (pommel != 0x104)
+						flag = 1;
 				break;
 				default:
 					flag = 1;
@@ -271,10 +285,14 @@ int kthread(void) {
 				case 0x00114000:
 					strcat(tlotr, "1"); // Legolas1
 					strcat(model, "2"); // TA-082
+					if (pommel != 0x112)
+						flag = 1;
 				break;
 				case 0x00121000:
 					strcat(tlotr, "2"); // Legolas2
 					strcat(model, "6"); // TA-086
+					if (pommel != 0x112)
+						flag = 1;
 				break;
 				default:
 					flag = 1;
@@ -291,23 +309,31 @@ int kthread(void) {
 			switch(baryon) {
 				case 0x0022B200:
 					strcat(model, "85v1");
+					if (pommel != 0x123)
+						flag = 1;
 				break;
 				case 0x00234000:
 					strcat(model, "85v2");
+					if (pommel != 0x123)
+						flag = 1;
 				break;
 				case 0x00243000:
 					switch(pommel) {
-						case 0x00000123:
+						case 0x00000123: // TA-088v1/2
 							// v1: 3.71/3.90/3.95
 							// v2: 3.95
-							if (shippedfw[0] != '5')
+							if (shippedfw[3] != '5')
 								strcat(model, "88v1");
 							else
 								strcat(model, "88v1/v2"); // TODO: proper detection
+							if (pommel != 0x123)
+								flag = 1;
 						break;
 						case 0x00000132: // TA-090v1 0-FV2-001-P1
 							flag = 1; // TODO: remove after proof
 							strcat(model, "90v1");
+							if (pommel != 0x123)
+								flag = 1;
 						break;
 						default:
 							flag = 1;
@@ -325,12 +351,15 @@ int kthread(void) {
 		case 0x00600000:
 			switch(baryon) {
 				case 0x00234000:
+					flag = 1;
 					strcpy(tlotr, "Frodo");
 					sprintf(model, "PSP-20%02i TA-088v3/TA-085v2 (hybrid)", ModelRegion[(int)region[0]]);
 				break;
 				case 0x00243000:
 					strcpy(tlotr, "Frodo");
 					sprintf(model, "PSP-20%02i TA-088v3", ModelRegion[(int)region[0]]);
+					if (pommel != 0x123)
+						flag = 1;
 				break;
 				case 0x00263100:
 					strcpy(tlotr, "Samwise");
@@ -351,6 +380,8 @@ int kthread(void) {
 				case 0x00285000:
 					strcpy(tlotr, "Samwise");
 					sprintf(model, "PSP-30%02i TA-092", ModelRegion[(int)region[0]]);
+					if (pommel != 0x133)
+						flag = 1;
 				break;
 				default:
 					flag = 1;
@@ -363,6 +394,8 @@ int kthread(void) {
 		case 0x00720000:
 			strcpy(tlotr, "Strider");
 			sprintf(model, "PSP-N10%02i TA-091", ModelRegion[(int)region[0]]);
+			if (pommel != 0x133)
+				flag = 1;
 		break;
 
 		case 0x00810000:
@@ -386,10 +419,14 @@ int kthread(void) {
 				case 0x002E4000: // TA-095v1 [09g]
 					strcpy(tlotr, "Samwise VA2");
 					sprintf(model, "PSP-30%02i TA-095v1", ModelRegion[(int)region[0]]);
+					if (pommel != 0x154)
+						flag = 1;
 				break;
 				case 0x012E4000: // TA-095v3 [07g]
 					strcpy(tlotr, "Samwise VA2");
 					sprintf(model, "PSP-30%02i TA-095v3", ModelRegion[(int)region[0]]);
+					if (pommel != 0x154)
+						flag = 1;
 				break;
 				case 0x00323100: // TA-094 [v1] 0-ST2-001-A2
 					flag = 1;
@@ -415,9 +452,13 @@ int kthread(void) {
 			switch(baryon) {
 				case 0x002E4000:
 					strcat(model, "2"); // TA-095v2 [09g]
+					if (pommel != 0x154)
+						flag = 1;
 				break;
 				case 0x012E4000:
 					strcat(model, "4"); // TA-095v4 [07g]
+					if (pommel != 0x154)
+						flag = 1;
 				break;
 				default:
 					flag = 1;
@@ -431,6 +472,8 @@ int kthread(void) {
 			sprintf(model, "PSP-E10%02i TA-096", ModelRegion[(int)region[0]]);
 			if (shippedfw[2] != '5') // shipped FW is newer than 6.50
 				strcat(model, "/TA-097"); // TODO: proper detection
+			if (pommel != 0x154)
+				flag = 1;
 		break;
 
 		case 0x8002013a:
