@@ -7,7 +7,7 @@
 #include "../kernel_lib/libpspexploit.h"
 
 #define VER_MAJOR 3
-#define VER_MINOR 0
+#define VER_MINOR 1
 #define VER_BUILD " \"Drambuie\""
 
 PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);

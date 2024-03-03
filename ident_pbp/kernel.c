@@ -487,10 +487,10 @@ int kthread(void) {
 
 	color(GREEN); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%c%c%c%c\n", "Kirk", kirk[3], kirk[2], kirk[1], kirk[0]);
-	color(GREEN); printf(" *"); color(WHITE);
-	if (generation != 5 && generation != 6)
+	if (generation != 5 && generation != 6) {
+		color(GREEN); printf(" *"); color(WHITE);
 		printf(" %-10s 0x%c%c%c%c\n", "Spock", spock[3], spock[2], spock[1], spock[0]);
-	
+	}
 	color(GREEN); printf(" *"); color(WHITE);
 	printf(" %-10s 0x%llx\n", "FuseId", fuseid);
 	color(GREEN); printf(" *"); color(WHITE);
