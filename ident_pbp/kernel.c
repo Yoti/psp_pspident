@@ -64,6 +64,30 @@ int (*_sceUmdExecInquiryCmd)(void*, int*, int*) = NULL;
 long long (*_sceSysregGetFuseId)(void) = NULL;
 void* (*_sceUmdManGetUmdDrive)(int) = NULL;
 
+void kversion_txt(void) {
+	int i;
+	int size;
+	SceUID fd;
+	unsigned char version[512];
+	unsigned char tab[4] = "   \0";
+	memset(version, 0, sizeof(version));
+	fd = k_tbl->KernelIOOpen("flash0:/vsh/etc/version.txt", PSP_O_RDONLY, 0777);
+	if (fd >= 0) {
+		size = k_tbl->KernelIORead(fd, version, sizeof(version));
+		k_tbl->KernelIOClose(fd);
+		color(LGRAY);
+		printf("%s", tab);
+		for (i = 0; i < size - 1; i++) {
+			if (version[i] == 0x0a)
+				printf("\n%s", tab);
+			else if (version[i] != 0x0d)
+				printf("%c", version[i]);
+		}
+		printf("\n");
+		color(WHITE);
+	}
+}
+
 void warn(void) {
 	int i;
 	color(YELLOW);
@@ -511,6 +535,9 @@ int kthread(void) {
 	} else { // non-QAF
 		strcat(model, " [non-QAF]");
 	}
+
+	if ((firmware >> 24) < 5)
+		kversion_txt();
 
 	if (shippedfw[0] != 0) {
 		color(ORANGE); printf(" *"); color(WHITE);

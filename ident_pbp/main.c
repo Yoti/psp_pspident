@@ -113,7 +113,9 @@ int main(int argc, char*argv[]) {
 	color(ORANGE); printf(" *"); color(WHITE);
 	printf(" %-10s %x.%x%x (0x%08x)\n", "Firmware", firmware >> 24,
 			(firmware >> 16) & 0xff, (firmware >> 8) & 0xff, firmware);
-	version_txt();
+
+	if ((firmware >> 24) >= 5)
+		version_txt();
 
 	int ret;
 	ret = pspXploitInitKernelExploit();
