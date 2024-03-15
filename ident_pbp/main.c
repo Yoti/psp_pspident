@@ -31,6 +31,23 @@ u32*vramaddr(int x, int y) {
 	return vram;
 }
 
+#ifdef DEBUG
+void random_pic(void) {
+	int h, w;
+	u32*vptr; u32*vptr0;
+
+	vptr0 = vramaddr(0, 272 - 1);
+	for (h = 264; h < 272; h++) {
+		vptr = vptr0;
+		for (w = 472; w < 480; w++) {
+			*vptr = *vptr ^ 0x00FFFFFF;
+			vptr++;
+		}
+		vptr0 -= 512;
+	}
+}
+#endif
+
 void savepict(const char*file) {
 	int h, w;
 	u32*vptr; u32*vptr0;
@@ -164,6 +181,9 @@ int main(int argc, char*argv[]) {
 					printf(" Screenshot was saved to %s!\n", file);
 					printf(" The program will automatically quit after 8 seconds...\n");
 					color(WHITE);
+					#ifdef DEBUG
+					random_pic();
+					#endif
 					sceKernelDelayThread(8*1000*1000);
 					break;
 				} else if ((pad.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE) {
