@@ -55,6 +55,7 @@ dkms.conf
 *.PBP
 *.prx
 *.psp
+*.pyc
 *.SFO
 *.zip
 
