@@ -10,7 +10,7 @@
 #define VER_MINOR 2
 #define VER_BUILD " \"Drambuie\""
 
-PSP_MODULE_INFO("pspIdent", 0, VER_MAJOR, VER_MINOR);
+PSP_MODULE_INFO("pspIdent", 0x200, VER_MAJOR, VER_MINOR);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER|PSP_THREAD_ATTR_VFPU);
 PSP_HEAP_SIZE_KB(4*1024);
 
@@ -169,6 +169,9 @@ int main(int argc, char*argv[]) {
 								time.hour, time.minutes, time.seconds);
 						fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
 						if (fd < 0) {
+							#ifdef DEBUG
+							random_pic();
+							#endif
 							savepict(file);
 							break;
 						} else {
@@ -181,9 +184,6 @@ int main(int argc, char*argv[]) {
 					printf(" Screenshot was saved to %s!\n", file);
 					printf(" The program will automatically quit after 8 seconds...\n");
 					color(WHITE);
-					#ifdef DEBUG
-					random_pic();
-					#endif
 					sceKernelDelayThread(8*1000*1000);
 					break;
 				} else if ((pad.Buttons & PSP_CTRL_CIRCLE) == PSP_CTRL_CIRCLE) {

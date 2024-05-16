@@ -11,3 +11,10 @@ if test -f EBOOT_ENC.PBP; then
 	rm -f EBOOT_ENC.PBP
 fi
 cd ../
+cd psptools/
+cd psptool/
+if test __pycache__; then
+	rm -rf __pycache__
+fi
+cd ../
+cd ../

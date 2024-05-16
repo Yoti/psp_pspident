@@ -30,6 +30,9 @@ unsigned char idsbtmac[7];
 unsigned int bromver;
 u64 tick;
 
+unsigned char outtxt[2048];
+#define print2 printf()
+
 typedef struct {
 	unsigned char peripheral_device_type;
 	unsigned char removable;
@@ -183,10 +186,15 @@ int kthread(void) {
 	_sceIdStorageLookup(0x0050, 0x41, &idsbtmac, 6);
 	memset(idswfreg, 0, sizeof(idswfreg));
 	_sceIdStorageLookup(0x0045, 0x00, &idswfreg, 1);
-	if ((int)idswfreg[0] < 0)
+	int idswfbak = 1;
+	if ((int)idswfreg[0] < 0) {
+		idswfbak = (int)idswfreg[0];
 		idswfreg[0] = '\1';
-	else if ((int)idswfreg[0] > ((sizeof(WiFiRegion) / sizeof(WiFiRegion[0])) - 1))
+	}
+	else if ((int)idswfreg[0] > ((sizeof(WiFiRegion) / sizeof(WiFiRegion[0])) - 1)) {
+		idswfbak = (int)idswfreg[0];
 		idswfreg[0] = '\1';
+	}
 	if ((int)idswfreg[0] == 1)
 		flag = 1;
 	memset(c2dreg, 0, sizeof(c2dreg));
@@ -590,7 +598,10 @@ int kthread(void) {
 	}
 	if (generation < 11) {
 		color(BLUE); printf(" *"); color(WHITE);
-		printf(" Wi-Fi region: %s\n", WiFiRegion[(int)idswfreg[0]]);
+		if ((int)idswfreg[0] != 1)
+			printf(" Wi-Fi region: %s\n", WiFiRegion[(int)idswfreg[0]]);
+		else
+			printf(" Wi-Fi region: unknown %i\n", idswfbak);
 	}
 	color(BLUE); printf(" *"); color(WHITE);
 	printf(" Call me ");
