@@ -6,11 +6,11 @@ CFLAGS = -O2 -G0 -Wall -Wno-trigraphs -Wno-int-conversion -Wno-incompatible-poin
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS) -c
 
-PSP_FW_VERSION = 100
+PSP_FW_VERSION = 270
 
 BUILD_PRX = 1
 EXTRA_TARGETS = EBOOT.PBP
-PSP_EBOOT_TITLE = pspIdent v3.2 by Yoti and friends
+PSP_EBOOT_TITLE = pspIdent v3.5 by Yoti and friends
 PSP_EBOOT_ICON = ICON0.PNG
 
 LIBDIR = ../kernel_lib

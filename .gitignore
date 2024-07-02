@@ -58,6 +58,7 @@ dkms.conf
 *.pyc
 *.SFO
 *.zip
+ident_pbp/rident.h
 
 # Custom allows
 !kernel_lib/libpspexploit.a

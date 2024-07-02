@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 cd ident_pbp/
+if ! test -f rident.h; then
+	echo void rident\(void\) \{\} > rident.h
+fi
 make clean>/dev/null
 
 echo Building decrypted EBOOT.PBP...

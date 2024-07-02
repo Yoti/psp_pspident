@@ -3,11 +3,12 @@
 #include <pspdisplay.h>
 #include <stdio.h> // sprintf()
 #include <stdlib.h> // malloc()
+#include "rident.h" // rident()
 #include "../lodepng/lodepng.h"
 #include "../kernel_lib/libpspexploit.h"
 
 #define VER_MAJOR 3
-#define VER_MINOR 2
+#define VER_MINOR 5
 #define VER_BUILD " \"Drambuie\""
 
 PSP_MODULE_INFO("pspIdent", 0x200, VER_MAJOR, VER_MINOR);
@@ -30,23 +31,6 @@ u32*vramaddr(int x, int y) {
 
 	return vram;
 }
-
-#ifdef DEBUG
-void random_pic(void) {
-	int h, w;
-	u32*vptr; u32*vptr0;
-
-	vptr0 = vramaddr(0, 272 - 1);
-	for (h = 264; h < 272; h++) {
-		vptr = vptr0;
-		for (w = 472; w < 480; w++) {
-			*vptr = *vptr ^ 0x00FFFFFF;
-			vptr++;
-		}
-		vptr0 -= 512;
-	}
-}
-#endif
 
 void savepict(const char*file) {
 	int h, w;
@@ -169,9 +153,7 @@ int main(int argc, char*argv[]) {
 								time.hour, time.minutes, time.seconds);
 						fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
 						if (fd < 0) {
-							#ifdef DEBUG
-							random_pic();
-							#endif
+							rident();
 							savepict(file);
 							break;
 						} else {
