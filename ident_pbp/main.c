@@ -144,13 +144,13 @@ int main(int argc, char*argv[]) {
 					sceIoMkdir(dir, 0777);
 
 					SceUID fd;
-					pspTime time;
+					ScePspDateTime time;
 					char file[128] = "\0";
 					for(;;) {
 						sceRtcGetCurrentClockLocalTime(&time);
 						sprintf(file, "%s/%04d%02d%02d_%02d%02d%02d.png", dir,
 								time.year, time.month, time.day,
-								time.hour, time.minutes, time.seconds);
+								time.hour, time.minute, time.second);
 						fd = sceIoOpen(file, PSP_O_RDONLY, 0777);
 						if (fd < 0) {
 							rident();
