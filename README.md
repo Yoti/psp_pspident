@@ -8,6 +8,7 @@ Open source and under MIT license
 ![README.png](README.png?raw=true "README.png")
 
 ## Changelog
+
 ### v1.0 "Aquavit"
 * Initial release
 ### v1.5 "Bourbon"
@@ -26,7 +27,7 @@ Open source and under MIT license
 * Removed duplicated line with generation
 * Added QA Flag detection
 ### v3.0 "Drambuie"
-* Added UMD FW version (except Go, by @krazynez)
+* Added UMD FW version (except Go, by @[krazynez](https://github.com/krazynez))
 * Added PSP Go TA-094 (codename Strider2) detection
 * pspIdent now runs on OFW (by @[Acid_Snake](https://github.com/JoseAaronLopezGarcia))
 ### v3.1 "Drambuie"

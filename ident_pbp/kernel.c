@@ -265,7 +265,7 @@ int kthread(void) {
 			}
 		break;
 
-		case 0x00200000: // TA-079 v4/5
+		case 0x00200000: // TA-079v4/5
 			strcpy(tlotr, "First");
 			sprintf(model, "PSP-10%02i TA-079v", ModelRegion[(int)region[0]]);
 
@@ -380,7 +380,7 @@ int kthread(void) {
 			}
 		break;
 
-		case 0x00600000:
+		case 0x00600000: // TA-088/90/92
 			switch(baryon) {
 				case 0x00234000:
 					flag = 1;
@@ -423,14 +423,14 @@ int kthread(void) {
 			}
 		break;
 
-		case 0x00720000:
+		case 0x00720000: // TA-091
 			strcpy(tlotr, "Strider");
 			sprintf(model, "PSP-N10%02i TA-091", ModelRegion[(int)region[0]]);
 			if (pommel != 0x133)
 				flag = 1;
 		break;
 
-		case 0x00810000:
+		case 0x00810000: // TA-093/4/5
 			switch(baryon) {
 				case 0x002C4000:
 					strcpy(tlotr, "Samwise VA2");
@@ -478,7 +478,7 @@ int kthread(void) {
 			}
 		break;
 
-		case 0x00820000:
+		case 0x00820000: // TA-095
 			strcpy(tlotr, "Samwise VA2");
 			sprintf(model, "PSP-30%02i TA-095v", ModelRegion[(int)region[0]]);
 			switch(baryon) {
@@ -499,7 +499,7 @@ int kthread(void) {
 			}
 		break;
 
-		case 0x00900000:
+		case 0x00900000: // TA-096/7
 			strcpy(tlotr, "Bilbo");
 			sprintf(model, "PSP-E10%02i TA-096", ModelRegion[(int)region[0]]);
 			if (shippedfw[2] != '5') // shipped FW is newer than 6.50
